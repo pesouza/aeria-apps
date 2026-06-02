@@ -17,6 +17,25 @@ app = Flask(__name__)
 app.config["SITE_URL"] = os.getenv("SITE_URL", "https://aeria-apps.com.br")
 app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 
+
+@app.after_request
+def add_security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    if "text/html" in response.content_type:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self'; "
+            "frame-src https://pagead2.googlesyndication.com; "
+        )
+    return response
+
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
 app.config["ADSENSE_CLIENT_ID"] = os.getenv("ADSENSE_CLIENT_ID", "")
 
@@ -33,7 +52,7 @@ logger = logging.getLogger(__name__)
 def default_content():
     return {
         "site_name": "Aeria Apps",
-        "meta_title": "Aeria Apps | Sistemas para reduzir fricção operacional",
+        "meta_title": "Aeria Apps | Selfwares — Sistemas Autônomos para Operações Reais",
         "meta_description": "Aeria Apps constrói selfwares para PMEs operacionais: sistemas que assumem tarefas repetitivas, acompanham processos, executam follow-ups e reduzem trabalho manual.",
         "canonical_url": os.getenv("SITE_URL", "https://aeria-apps.com.br"),
         "og_image": "",
@@ -112,11 +131,17 @@ Sitemap: {site_url}/sitemap.xml
 @app.get("/sitemap.xml")
 def sitemap():
     site_url = app.config["SITE_URL"]
+    sections = [
+        "", "selfware", "applications", "real-scenarios",
+        "before-after", "infrastructure", "contact",
+    ]
+    urls = "\n".join(
+        f'  <url>\n    <loc>{site_url}/#{s}</loc>\n    <priority>{"1.0" if not s else "0.8"}</priority>\n  </url>'
+        for s in sections
+    )
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{site_url}/</loc>
-  </url>
+{urls}
 </urlset>
 """
     return Response(xml, mimetype="application/xml")

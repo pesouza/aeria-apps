@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050814">
 
   <title>{{ content.meta_title or "Aeria Apps — Selfwares" }}</title>
 
@@ -50,6 +51,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: local('Inter');
+    }
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: local('Inter');
+    }
+  </style>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
@@ -62,26 +79,65 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "{{ content.site_name or 'Aeria Apps' }}",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web",
-    "description": "{{ content.meta_description or 'Sistemas autônomos para reduzir fricção operacional em PMEs.' }}",
-    "url": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}",
-    "author": {
-      "@type": "Organization",
-      "name": "Aeria Creative Solutions"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL",
-      "description": "Diagnóstico operacional gratuito"
-    }
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Aeria Creative Solutions",
+        "url": "https://aeria-cs.com.br",
+        "legalName": "PAULO EDUARDO UBALDINO DE SOUZA CONSULTORIA EM TECNOLOGIA DA INFORMACAO LTDA",
+        "foundingDate": "2022-03-09",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Omar Fonseca, 70 - Urbanova",
+          "addressLocality": "São José dos Campos",
+          "addressRegion": "SP",
+          "postalCode": "12244-396",
+          "addressCountry": "BR"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+55-12-3197-3198",
+          "contactType": "sales",
+          "availableLanguage": ["Portuguese", "English"]
+        },
+        "sameAs": [
+          "https://wa.me/551231973198",
+          "https://www.instagram.com/aeriacs"
+        ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "{{ content.site_name or 'Aeria Apps' }}",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "{{ content.meta_description or 'Sistemas autônomos (selfwares) que assumem tarefas repetitivas, acompanham processos e mantêm fluxos operacionais em movimento.' }}",
+        "url": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}",
+        "author": {
+          "@type": "Organization",
+          "name": "Aeria Creative Solutions"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL",
+          "description": "Diagnóstico operacional gratuito"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Início", "item": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}"},
+          {"@type": "ListItem", "position": 2, "name": "Selfware", "item": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}#selfware"},
+          {"@type": "ListItem", "position": 3, "name": "Aplicações", "item": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}#applications"},
+          {"@type": "ListItem", "position": 4, "name": "Contato", "item": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}#contact"}
+        ]
+      }
+    ]
   }
   </script>
 </head>
 <body>
+  <a href="#main-content" class="skip-to-content">Pular para o conteúdo</a>
   {% block body %}{% endblock %}
 </body>
 </html>

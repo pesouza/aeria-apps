@@ -11,7 +11,7 @@
       >
     </div>
 
-    <nav>
+    <nav aria-label="Navegação principal">
       <a href="#selfware">Selfware</a>
       <a href="#applications">Aplicações</a>
       <a href="#infrastructure">Infraestrutura</a>
@@ -33,7 +33,7 @@
   <a href="https://wa.me/551231973198" class="mobile-link mobile-cta">Agendar diagnóstico</a>
 </nav>
 
-<section class="hero">
+<section id="main-content" class="hero">
   <div class="container hero-grid">
 
     <div>
@@ -86,6 +86,8 @@
         class="section-visual hero-visual"
         src="{{ url_for('static', filename='img/hero-visual.jpeg') }}"
         alt="Runtime operacional futurista com agentes autônomos executando workflows em tempo real"
+        fetchpriority="high"
+        loading="eager"
       >
 
       <div class="visual-overlay-card runtime-overlay">
@@ -405,7 +407,7 @@
         <strong>Live operational stream</strong>
       </div>
 
-      <div class="feed-item">
+      <div class="feed-item doc">
         <span class="feed-time">08:42</span>
         <div>
           <strong>Documento classificado</strong>
@@ -413,7 +415,7 @@
         </div>
       </div>
 
-      <div class="feed-item">
+      <div class="feed-item followup">
         <span class="feed-time">08:46</span>
         <div>
           <strong>Follow-up executado</strong>
@@ -421,7 +423,7 @@
         </div>
       </div>
 
-      <div class="feed-item">
+      <div class="feed-item alert">
         <span class="feed-time">08:51</span>
         <div>
           <strong>Anomalia visual sinalizada</strong>
@@ -429,7 +431,7 @@
         </div>
       </div>
 
-      <div class="feed-item">
+      <div class="feed-item workflow">
         <span class="feed-time">08:57</span>
         <div>
           <strong>Workflow concluído</strong>
@@ -535,6 +537,7 @@
             <path d="M10 18c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4v2c0 4.4-3.6 8-8 8v-4c2.2 0 4-1.8 4-4v-2zm12 0c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4v2c0 4.4-3.6 8-8 8v-4c2.2 0 4-1.8 4-4v-2z" fill="currentColor" opacity="0.15"/>
           </svg>
           <p>{{ t.text }}</p>
+          <div class="testimonial-rating" aria-label="5 de 5 estrelas">★★★★★</div>
         </div>
         <div class="testimonial-author">
           <div class="testimonial-avatar">{{ t.name[0] }}{{ t.name.split()[-1][0] }}</div>
@@ -724,10 +727,33 @@
 
 <footer class="footer">
   <div class="container footer-inner">
-    <span>© 2026 Aeria Apps</span>
-    <span>Selfwares • Sistemas Autônomos • IA Operacional</span>
+    <div class="footer-brand">
+      <strong style="color:var(--text);font-size:18px;">Aeria Apps</strong>
+      <p>Sistemas autônomos (selfwares) que assumem tarefas repetitivas, acompanham processos e mantêm fluxos operacionais em movimento.</p>
+    </div>
+    <div class="footer-column">
+      <strong>Navegue</strong>
+      <a href="#selfware">Selfware</a>
+      <a href="#applications">Aplicações</a>
+      <a href="#infrastructure">Infraestrutura</a>
+      <a href="#contact">Contato</a>
+    </div>
+    <div class="footer-column">
+      <strong>Legal</strong>
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Termos de Uso</a>
+      <a href="#">LGPD</a>
+    </div>
+    <div class="footer-legal">
+      <span>© 2026 Aeria Apps</span>
+      <span>Selfwares • Sistemas Autônomos • IA Operacional</span>
+    </div>
   </div>
 </footer>
+
+<button class="scroll-top" id="scroll-top" aria-label="Voltar ao topo">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
 
 <!-- Floating WhatsApp button -->
 <a class="sticky-wa btn" href="https://wa.me/551231973198?text=Olá!%20Vim%20pelo%20site%20da%20Aeria%20Apps%20e%20gostaria%20de%20saber%20mais." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
@@ -776,6 +802,22 @@
         mobileNav.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
       });
+    });
+  }
+
+  /* ─── Scroll to Top ─── */
+  var scrollTopBtn = document.getElementById('scroll-top');
+  if (scrollTopBtn) {
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 400) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+    });
+
+    scrollTopBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
@@ -854,16 +896,14 @@
   var feedContainer = document.getElementById('execution-feed');
   if (feedContainer) {
     var feedEvents = [
-      { time: '09:12', title: 'Documento classificado', desc: 'Nota fiscal recebida, extraída e enviada para contabilidade.' },
-      { time: '09:18', title: 'Follow-up automático enviado', desc: 'Lead sem resposta há 3 dias recebeu contato via WhatsApp.' },
-      { time: '09:24', title: 'Fluxo de aprovação concluído', desc: 'Orçamento aprovado e encaminhado para execução.' },
-      { time: '09:31', title: 'Anomalia detectada', desc: 'Imagem de inspeção sinalizada com possível desgaste mecânico.' },
-      { time: '09:37', title: 'Workflow sincronizado', desc: 'Dados reconciliados entre CRM, planilha e sistema interno.' },
+      { time: '09:12', title: 'Documento classificado', desc: 'Nota fiscal recebida, extraída e enviada para contabilidade.', cls: 'doc' },
+      { time: '09:18', title: 'Follow-up automático enviado', desc: 'Lead sem resposta há 3 dias recebeu contato via WhatsApp.', cls: 'followup' },
+      { time: '09:24', title: 'Fluxo de aprovação concluído', desc: 'Orçamento aprovado e encaminhado para execução.', cls: 'workflow' },
+      { time: '09:31', title: 'Anomalia detectada', desc: 'Imagem de inspeção sinalizada com possível desgaste mecânico.', cls: 'alert' },
+      { time: '09:37', title: 'Workflow sincronizado', desc: 'Dados reconciliados entre CRM, planilha e sistema interno.', cls: 'workflow' },
     ];
     var feedIndex = 0;
 
-    // wrap all existing feed-items for replacement
-    var existingItems = feedContainer.querySelectorAll('.feed-item');
     var feedWrapper = document.createElement('div');
     feedWrapper.setAttribute('aria-live', 'polite');
     feedWrapper.setAttribute('aria-label', 'Eventos operacionais em tempo real');
@@ -874,7 +914,7 @@
       for (var i = 0; i < count && i < feedEvents.length; i++) {
         var ev = feedEvents[(feedIndex - count + i + feedEvents.length) % feedEvents.length];
         var el = document.createElement('div');
-        el.className = 'feed-item';
+        el.className = 'feed-item' + (ev.cls ? ' ' + ev.cls : '');
         el.innerHTML = '<span class="feed-time">' + ev.time + '</span><div><strong>' + ev.title + '</strong><p>' + ev.desc + '</p></div>';
         feedWrapper.appendChild(el);
       }
@@ -921,6 +961,8 @@
         return;
       }
 
+      var submitBtn = contactForm.querySelector('.form-submit');
+      submitBtn.classList.add('loading');
       feedbackEl.className = 'form-feedback success';
       feedbackEl.textContent = 'Enviando...';
 
@@ -929,6 +971,7 @@
       xhr.setRequestHeader('Content-Type', 'application/json');
 
       xhr.onload = function() {
+        submitBtn.classList.remove('loading');
         if (xhr.status === 200) {
           feedbackEl.className = 'form-feedback success';
           feedbackEl.textContent = 'Recebi sua mensagem! Entro em contato em até 2 dias úteis.';
@@ -940,6 +983,7 @@
       };
 
       xhr.onerror = function() {
+        submitBtn.classList.remove('loading');
         feedbackEl.className = 'form-feedback error';
         feedbackEl.textContent = 'Erro de conexão. Tente novamente ou fale direto no WhatsApp.';
       };

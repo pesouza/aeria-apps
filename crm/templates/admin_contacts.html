@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aeria CRM — Contatos</title>
+  <link rel="stylesheet" href="/static/crm.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo">A</div><span style="font-weight:600">Aeria CRM</span></div>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/contacts" class="active">Contatos</a>
+      <a href="/admin/comments">Comentários</a>
+      <a href="/admin/analytics">Analytics</a>
+      <a href="/">Ver site</a>
+      <a href="/admin/logout">Sair</a>
+    </nav>
+  </div>
+  <div class="wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <h1>Contatos ({{ total }})</h1>
+      <div style="display:flex;gap:8px">
+        <a href="/admin/contacts" class="btn {% if not status %}active{% endif %}">Todos</a>
+        <a href="/admin/contacts?status=new" class="btn {% if status == 'new' %}active{% endif %}">Novos</a>
+        <a href="/admin/contacts?status=contacted" class="btn {% if status == 'contacted' %}active{% endif %}">Contatados</a>
+        <a href="/admin/contacts?status=qualified" class="btn {% if status == 'qualified' %}active{% endif %}">Qualificados</a>
+        <a href="/admin/contacts?status=converted" class="btn {% if status == 'converted' %}active{% endif %}">Convertidos</a>
+        <a href="/admin/contacts?status=lost" class="btn {% if status == 'lost' %}active{% endif %}">Perdidos</a>
+      </div>
+    </div>
+
+    <form method="get" style="margin:16px 0;display:flex;gap:8px" action="/admin/contacts">
+      <input type="text" name="q" placeholder="Buscar por nome, email, telefone..." value="{{ query or '' }}"
+             style="flex:1;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#f5f7fb;font-size:14px;outline:none">
+      <button type="submit" class="btn active">Buscar</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+
+    <div class="card" style="overflow-x:auto">
+      {% if contacts %}
+      <table class="table">
+        <tr>
+          <th>ID</th><th>Nome</th><th>Email</th><th>Telefone</th><th>Fonte</th><th>Status</th><th>Data</th>
+        </tr>
+        {% for c in contacts %}
+        <tr>
+          <td><a href="/admin/contacts/{{ c.id }}" style="color:#6d8dff">{{ c.id }}</a></td>
+          <td>{{ c.name }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.phone or '-' }}</td>
+          <td>{{ c.source }}</td>
+          <td><span class="pill {{ c.status }}">{{ c.status }}</span></td>
+          <td>{{ c.created_at[:10] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p style="color:#9ea8c5">Nenhum contato encontrado.</p>
+      {% endif %}
+    </div>
+
+    {% if total > limit %}
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:center">
+      {% for p in range(1, (total // limit) + 2) %}
+        <a href="/admin/contacts?page={{ p }}{% if status %}&status={{ status }}{% endif %}{% if query %}&q={{ query }}{% endif %}"
+           class="btn {% if p == page %}active{% endif %}">{{ p }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

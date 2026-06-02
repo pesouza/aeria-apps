@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aeria CRM — {{ contact.name }}</title>
+  <link rel="stylesheet" href="/static/crm.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo">A</div><span style="font-weight:600">Aeria CRM</span></div>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/contacts" class="active">Contatos</a>
+      <a href="/admin/comments">Comentários</a>
+      <a href="/admin/analytics">Analytics</a>
+      <a href="/">Ver site</a>
+      <a href="/admin/logout">Sair</a>
+    </nav>
+  </div>
+  <div class="wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+
+    <div class="row">
+      <div class="card">
+        <h1>{{ contact.name }}</h1>
+        <p style="color:#9ea8c5;margin:4px 0 20px">
+          Criado em {{ contact.created_at[:19] }} · {{ contact.source }}
+        </p>
+
+        <form method="post" action="/admin/contacts/{{ contact.id }}/update">
+          <div class="form-group">
+            <label>Nome</label>
+            <input name="name" value="{{ contact.name }}">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input name="email" value="{{ contact.email }}">
+            </div>
+            <div class="form-group">
+              <label>Telefone</label>
+              <input name="phone" value="{{ contact.phone }}">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Empresa</label>
+              <input name="company" value="{{ contact.company }}">
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select name="status">
+                <option value="new" {% if contact.status == 'new' %}selected{% endif %}>Novo</option>
+                <option value="contacted" {% if contact.status == 'contacted' %}selected{% endif %}>Contatado</option>
+                <option value="qualified" {% if contact.status == 'qualified' %}selected{% endif %}>Qualificado</option>
+                <option value="converted" {% if contact.status == 'converted' %}selected{% endif %}>Convertido</option>
+                <option value="lost" {% if contact.status == 'lost' %}selected{% endif %}>Perdido</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Mensagem original</label>
+            <textarea rows="3" readonly style="background:rgba(255,255,255,0.03);color:#9ea8c5">{{ contact.message }}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Anotações internas</label>
+            <textarea name="notes" rows="3">{{ contact.notes }}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Nova interação</label>
+            <input name="interaction" placeholder="Ex: Ligação realizada, lead interessado...">
+          </div>
+          <button type="submit" class="btn active">Salvar alterações</button>
+        </form>
+
+        <form method="post" action="/admin/contacts/{{ contact.id }}/delete" style="margin-top:12px"
+              onsubmit="return confirm('Remover este contato permanentemente?')">
+          <button type="submit" class="btn" style="background:rgba(255,80,80,0.2);color:#ff6b6b">Remover contato</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:16px;margin-bottom:12px">Histórico de interações</h2>
+        {% if interactions %}
+          {% for i in interactions %}
+          <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:12px;color:#9ea8c5">{{ i.created_at[:19] }}</div>
+            <div style="margin-top:4px;font-size:14px">{{ i.content }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color:#9ea8c5">Nenhuma interação registrada.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

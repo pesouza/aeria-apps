@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comunidade — AerIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body{ font-family:'Inter',sans-serif; background:linear-gradient(135deg,#0b0e1a,#12182b); color:#e0e0e0; min-height:100vh; }
+    .topbar{ background:rgba(11,14,26,.85); backdrop-filter:blur(12px); padding:16px 32px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.06); }
+    .brand{ font-size:22px; font-weight:800; background:linear-gradient(135deg,#7c3aed,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .topbar nav a{ color:#94a3b8; text-decoration:none; margin-left:20px; font-size:14px; font-weight:500; transition:color .2s; }
+    .topbar nav a:hover{ color:#a78bfa; }
+    .container{ max-width:960px; margin:0 auto; padding:32px 20px; }
+    h1{ font-size:28px; font-weight:700; margin-bottom:8px; }
+    .sub{ color:#94a3b8; margin-bottom:32px; font-size:14px; }
+    .grid{ display:grid; grid-template-columns:1fr 280px; gap:32px; }
+    @media(max-width:768px){.grid{grid-template-columns:1fr;}}
+    .topic-card{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:20px; margin-bottom:16px; transition:border-color .2s; cursor:pointer; }
+    .topic-card:hover{ border-color:rgba(124,58,237,.4); }
+    .topic-card a{ text-decoration:none; color:inherit; display:block; }
+    .tc-head{ display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+    .tc-icon{ font-size:24px; }
+    .tc-title{ font-size:16px; font-weight:600; color:#e8e8e8; }
+    .tc-desc{ font-size:13px; color:#94a3b8; line-height:1.5; margin-bottom:10px; }
+    .tc-meta{ display:flex; gap:16px; font-size:12px; color:#64748b; }
+    .tc-meta span{ display:flex; align-items:center; gap:4px; }
+    .sidebar-card{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:20px; margin-bottom:16px; }
+    .sidebar-card h3{ font-size:15px; font-weight:600; margin-bottom:12px; color:#e8e8e8; }
+    .cat-list{ list-style:none; }
+    .cat-list li{ margin-bottom:8px; }
+    .cat-list a{ color:#94a3b8; text-decoration:none; font-size:13px; transition:color .2s; display:flex; align-items:center; gap:8px; }
+    .cat-list a:hover{ color:#a78bfa; }
+    .btn-primary{ display:inline-block; background:linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; padding:12px 24px; border-radius:8px; font-weight:600; font-size:14px; text-decoration:none; border:none; cursor:pointer; transition:opacity .2s; width:100%; text-align:center; }
+    .btn-primary:hover{ opacity:.9; }
+    .flash{ padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px; }
+    .flash.success{ background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#4ade80; }
+    .flash.error{ background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); color:#f87171; }
+    .flash.warning{ background:rgba(234,179,8,.15); border:1px solid rgba(234,179,8,.3); color:#facc15; }
+  </style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">AerIA</div>
+  <nav>
+    <a href="{{ url_for('client_dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('academy_index') }}">Academy</a>
+    <a href="{{ url_for('template_library') }}">Templates</a>
+    <a href="{{ url_for('community_index') }}">Comunidade</a>
+    <a href="{{ url_for('events_index') }}">Eventos</a>
+    <a href="{{ url_for('auth_logout') }}">Sair</a>
+  </nav>
+</div>
+<div class="container">
+  <h1>💬 Comunidade</h1>
+  <p class="sub">Troque ideias, tire dúvidas e compartilhe resultados com outros alunos</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="grid">
+    <div>
+      {% for t in topics %}
+      <div class="topic-card">
+        <a href="{{ url_for('community_topic', topic_key=t.key) }}">
+          <div class="tc-head">
+            <span class="tc-icon">{{ t.icon }}</span>
+            <span class="tc-title">{{ t.title }}</span>
+          </div>
+          <div class="tc-desc">{{ t.description }}</div>
+          <div class="tc-meta">
+            <span>💬 {{ t.reply_count }}</span>
+            <span>🏷️ {{ categories.get(t.category, t.category) }}</span>
+            {% if t.author_name %}<span>👤 {{ t.author_name }}</span>{% endif %}
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div>
+      <div class="sidebar-card">
+        <h3>Categorias</h3>
+        <ul class="cat-list">
+          <li><a href="{{ url_for('community_index') }}">📋 Todas</a></li>
+          <li><a href="{{ url_for('community_index') }}?cat=geral">💬 Geral</a></li>
+          <li><a href="{{ url_for('community_index') }}?cat=cases">🏆 Cases de Sucesso</a></li>
+          <li><a href="{{ url_for('community_index') }}?cat=cursos">📚 Cursos</a></li>
+          <li><a href="{{ url_for('community_index') }}?cat=ideias">💡 Ideias</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <a href="{{ url_for('community_new_topic') }}" class="btn-primary">➕ Novo Tópico</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

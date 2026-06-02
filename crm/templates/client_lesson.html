@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ lesson.title }} — Selfware Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #fff; font-family: Inter, sans-serif; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #0f0f17; border-bottom: 1px solid #1a1a24; }
+    .topbar a { color: #888; text-decoration: none; font-size: 13px; }
+    .topbar a:hover { color: #6c5ce7; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; display: flex; gap: 32px; }
+    .sidebar { width: 280px; flex-shrink: 0; }
+    .sidebar h2 { font-size: 16px; margin-bottom: 16px; color: #ccc; }
+    .sidebar .progress-text { font-size: 12px; color: #888; margin-bottom: 12px; }
+    .sidebar .bar { height: 3px; background: #1e1e2a; border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+    .sidebar .bar .fill { height: 100%; background: #6c5ce7; border-radius: 2px; }
+    .lesson-list { list-style: none; }
+    .lesson-list li { margin-bottom: 4px; }
+    .lesson-list a { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; text-decoration: none; color: #888; font-size: 13px; transition: all .15s; }
+    .lesson-list a:hover { background: #13131a; color: #ccc; }
+    .lesson-list a.active { background: #1a1a2e; color: #6c5ce7; font-weight: 500; }
+    .lesson-list a .status { font-size: 12px; }
+    .main { flex: 1; min-width: 0; }
+    .main .breadcrumb { font-size: 12px; color: #666; margin-bottom: 8px; }
+    .main .breadcrumb a { color: #6c5ce7; text-decoration: none; }
+    .main .breadcrumb a:hover { text-decoration: underline; }
+    .main h1 { font-size: 20px; margin-bottom: 4px; }
+    .main .duration { display: inline-block; font-size: 12px; color: #888; background: #13131a; padding: 4px 10px; border-radius: 4px; margin-bottom: 24px; }
+    .lesson-content { background: #13131a; border: 1px solid #1e1e2a; border-radius: 12px; padding: 32px; line-height: 1.8; font-size: 14px; color: #ccc; }
+    .lesson-content p { margin-bottom: 16px; }
+    .lesson-content h2 { color: #fff; font-size: 18px; margin: 24px 0 12px; }
+    .lesson-content h3 { color: #ddd; font-size: 16px; margin: 20px 0 8px; }
+    .lesson-content code { background: #1e1e2a; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #6c5ce7; }
+    .lesson-content pre { background: #0f0f17; border: 1px solid #1e1e2a; border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; font-size: 13px; }
+    .lesson-content pre code { background: none; color: #ccc; padding: 0; }
+    .lesson-content ul, .lesson-content ol { margin-bottom: 16px; padding-left: 20px; }
+    .lesson-content li { margin-bottom: 8px; }
+    .lesson-content .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 24px; }
+    .lesson-content .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .lesson-nav { display: flex; justify-content: space-between; margin-top: 32px; }
+    .lesson-nav a { padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 500; transition: all .2s; }
+    .lesson-nav .prev { background: #1a1a24; color: #888; }
+    .lesson-nav .prev:hover { background: #2a2a3a; color: #ccc; }
+    .lesson-nav .next { background: #6c5ce7; color: #fff; }
+    .lesson-nav .next:hover { background: #5a4bd1; }
+    .lesson-nav .next:after { content: ' →'; }
+    .lesson-nav .prev:before { content: '← '; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="{{ url_for('academy_course', course_key=course.key) }}">← {{ course.title }}</a>
+    <a href="{{ url_for('client_dashboard') }}">🏠 Dashboard</a>
+  </div>
+  <div class="container">
+    <div class="sidebar">
+      <h2>{{ course.title }}</h2>
+      <div class="progress-text">{{ completed }}/{{ total }} aulas concluídas</div>
+      <div class="bar"><div class="fill" style="width:{% if total > 0 %}{{ (completed / total * 100)|int }}{% else %}0{% endif %}%"></div></div>
+      <ul class="lesson-list">
+        {% for lsn in lessons %}
+        <li>
+          <a href="{{ url_for('academy_lesson', course_key=course.key, lesson_key=lsn.key) }}"
+             class="{% if lsn.key == lesson.key %}active{% endif %}">
+            <span class="status">{{ '✅' if lsn.completed else '📖' }}</span>
+            {{ lsn.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="main">
+      <div class="breadcrumb">
+        <a href="{{ url_for('academy_index') }}">Academy</a> / 
+        <a href="{{ url_for('academy_course', course_key=course.key) }}">{{ course.title }}</a> / 
+        {{ lesson.title }}
+      </div>
+      <h1>{{ lesson.title }}</h1>
+      {% if lesson.duration %}<span class="duration">⏱ {{ lesson.duration }}</span>{% endif %}
+      <div class="lesson-content">
+        {% if lesson.video_url %}
+        <div class="video-container">
+          <iframe src="{{ lesson.video_url }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+        {% endif %}
+        {{ lesson.content|safe }}
+      </div>
+      <div class="lesson-nav">
+        {% if prev_lesson %}
+        <a href="{{ url_for('academy_lesson', course_key=course.key, lesson_key=prev_lesson.key) }}" class="prev">Anterior</a>
+        {% else %}
+        <span></span>
+        {% endif %}
+        {% if next_lesson %}
+        <a href="{{ url_for('academy_lesson', course_key=course.key, lesson_key=next_lesson.key) }}" class="next">Próxima</a>
+        {% else %}
+        <span></span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

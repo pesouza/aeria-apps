@@ -1,0 +1,954 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<header class="header">
+  <div class="container nav">
+    <div class="brand">
+      <img
+        class="site-logo"
+        src="{{ url_for('static', filename='img/aeriaApps-logo.png') }}"
+        alt="Aeria Apps"
+      >
+    </div>
+
+    <nav>
+      <a href="#selfware">Selfware</a>
+      <a href="#applications">Aplicações</a>
+      <a href="#infrastructure">Infraestrutura</a>
+      <a href="#contact">Contato</a>
+    </nav>
+
+    <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile navigation overlay -->
+<nav class="mobile-nav" aria-hidden="true">
+  <a href="#selfware" class="mobile-link">Selfware</a>
+  <a href="#applications" class="mobile-link">Aplicações</a>
+  <a href="#infrastructure" class="mobile-link">Infraestrutura</a>
+  <a href="#contact" class="mobile-link">Contato</a>
+  <a href="https://wa.me/551231973198" class="mobile-link mobile-cta">Agendar diagnóstico</a>
+</nav>
+
+<section class="hero">
+  <div class="container hero-grid">
+
+    <div>
+      <div class="eyebrow">
+        SISTEMAS AUTÔNOMOS PARA OPERAÇÕES REAIS
+      </div>
+
+      <h1>
+        Menos tarefas manuais. Mais operação fluindo.
+      </h1>
+
+      <p class="hero-text">
+        Aeria Apps constrói selfwares: sistemas que assumem tarefas repetitivas,
+        acompanham processos, executam follow-ups e mantêm fluxos operacionais
+        em movimento com menos dependência humana.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="https://wa.me/551231973198">
+          Agendar diagnóstico
+        </a>
+
+        <a class="btn secondary" href="#applications">
+          Ver aplicações
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card reveal-scale">
+          <div class="stat-number" data-target="87">0</div>
+          <strong>Menos atrasos</strong>
+          <span>tarefas acompanhadas e executadas no tempo certo</span>
+        </div>
+
+        <div class="stat-card reveal-scale">
+          <div class="stat-number" data-target="64">0</div>
+          <strong>Menos retrabalho</strong>
+          <span>informações organizadas e processos com continuidade</span>
+        </div>
+
+        <div class="stat-card reveal-scale">
+          <div class="stat-number" data-target="100">0</div>
+          <strong>Menos caos</strong>
+          <span>fluxos centralizados, rastreáveis e operando continuamente</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel hero-visual-panel">
+      <img
+        class="section-visual hero-visual"
+        src="{{ url_for('static', filename='img/a-sleek-cinematic-visualization-of-auton_38NkXOYzVcOv22vYhD0Ehg_kCUvllkpTs-J_3PyddZn9A_sd.jpeg') }}"
+        alt="Runtime operacional futurista com agentes autônomos executando workflows em tempo real"
+      >
+
+      <div class="visual-overlay-card runtime-overlay">
+        <span class="runtime-kicker">AGENT RUNTIME</span>
+        <strong>Selfware Operating Loop</strong>
+
+        <div class="runtime-live">
+          <span class="status-dot"></span>
+          <span>Online</span>
+          <span class="online-counter">há <span id="online-days">—</span> dias</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto reveal">
+  <div class="container manifesto-box">
+
+    <div>
+      <span class="manifesto-label">FILOSOFIA</span>
+
+      <h2>
+        A próxima geração de software não será apenas usada.
+        Ela irá operar.
+      </h2>
+    </div>
+
+    <p>
+      Empresas pequenas e médias não deveriam precisar de operações pesadas
+      para executar tarefas repetitivas.
+
+      Selfwares reduzem atrito operacional,
+      automatizam execução e liberam tempo humano para decisões estratégicas.
+    </p>
+
+  </div>
+</section>
+
+<section id="selfware" class="section short-manifesto reveal">
+  <div class="container short-manifesto-box">
+    <span>O QUE É SELFWARE</span>
+
+    <h2>
+      Software tradicional depende de operadores.
+      Selfwares reduzem essa dependência.
+    </h2>
+
+    <p>
+      Selfware é o conceito de desenvolver sistemas, automações e ferramentas
+      sob medida para uso individual ou para necessidades superespecíficas
+      de uma empresa.
+    </p>
+
+    <p>
+      Na Aeria Apps, isso significa construir sistemas operacionais autônomos
+      para fluxos reais: observar eventos, interpretar contexto, tomar decisões
+      e executar tarefas.
+    </p>
+  </div>
+</section>
+
+<section id="applications" class="section applications reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>PROBLEMAS QUE RESOLVEMOS</span>
+
+      <h2>
+        Sistemas que assumem partes da operação.
+      </h2>
+
+      <p>
+        Selfwares acompanham rotinas, executam tarefas repetitivas,
+        organizam informação e acionam pessoas apenas quando necessário.
+      </p>
+    </div>
+
+    <div class="applications-grid">
+      <article class="application-card">
+        <div class="application-index">01</div>
+
+        <h3>Atendimento operacional autônomo</h3>
+
+        <figure class="image-card">
+          <img
+            src="{{ url_for('static', filename='img/gpt-image-2_Operational_AI_assistant_managing_customer_conversations_autonomously_realistic_-0.jpg') }}"
+            alt="Dashboard de atendimento autônomo gerenciando conversas, confirmações e follow-ups"
+            loading="lazy"
+          >
+        </figure>
+
+        <p>
+          O sistema acompanha conversas, responde dúvidas recorrentes,
+          confirma horários, envia lembretes e evita que contatos importantes esfriem.
+        </p>
+      </article>
+
+      <article class="application-card">
+        <div class="application-index">02</div>
+
+        <h3>Processamento automático de documentos</h3>
+
+        <figure class="image-card">
+          <img
+            src="{{ url_for('static', filename='img/gpt-image-2_AI_document_intelligence_system_processing_PDFs_automatically_extracting_informa-0.jpg') }}"
+            alt="Sistema de inteligência documental processando PDFs e extraindo dados estruturados"
+            loading="lazy"
+          >
+        </figure>
+
+        <p>
+          Documentos recebidos são lidos, classificados e transformados
+          em dados úteis para formulários, sistemas internos e responsáveis.
+        </p>
+      </article>
+
+      <article class="application-card">
+        <div class="application-index">03</div>
+
+        <h3>Inspeção visual e evidências</h3>
+
+        <figure class="image-card">
+          <img
+            src="{{ url_for('static', filename='img/gpt-image-2_Advanced_industrial_computer_vision_platform_analyzing_energy_infrastructure_cor-0.jpg') }}"
+            alt="Plataforma de visão computacional industrial analisando infraestrutura com overlays técnicos"
+            loading="lazy"
+          >
+        </figure>
+
+        <p>
+          Análise de imagens, inspeções, registros técnicos e evidências visuais
+          para apoiar classificação, detecção e priorização operacional.
+        </p>
+      </article>
+
+      <article class="application-card">
+        <div class="application-index">04</div>
+
+        <h3>Fluxos operacionais e tarefas que ninguém acompanha</h3>
+
+        <figure class="image-card">
+          <img
+            src="{{ url_for('static', filename='img/a-sophisticated-operational-dashboard-in_ZvVJq3rmUPaIRBFfc7bnqg_YWbY2hdqQvKgXzZrIwvQZA_sd.jpeg') }}"
+            alt="Dashboard operacional com pipelines, tarefas e workflows autônomos em execução"
+            loading="lazy"
+          >
+        </figure>
+
+        <p>
+          Processos internos passam a ser acompanhados por sistemas que executam etapas,
+          integram ferramentas e notificam responsáveis no momento certo.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="real-scenarios" class="section real-scenarios reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>CENÁRIOS REAIS</span>
+
+      <h2>
+        Onde selfwares reduzem trabalho manual.
+      </h2>
+
+      <p>
+        O foco não é usar IA por usar. É tirar peso operacional de rotinas
+        que hoje dependem de pessoas lembrando, copiando, cobrando e atualizando sistemas.
+      </p>
+    </div>
+
+    <div class="scenario-grid">
+      <article class="scenario-card">
+        <div class="scenario-top">
+          <span>CLÍNICA</span>
+          <strong>Paciente faltou</strong>
+        </div>
+
+        <div class="scenario-flow">
+          <div>Falta detectada</div>
+          <i></i>
+          <div>Selfware reage</div>
+          <i></i>
+          <div>Reagenda</div>
+          <i></i>
+          <div>Confirma</div>
+          <i></i>
+          <div>Atualiza agenda</div>
+        </div>
+
+        <p>
+          O sistema identifica ausência, aciona o paciente, propõe novo horário,
+          confirma o reagendamento e mantém a agenda atualizada.
+        </p>
+      </article>
+
+      <article class="scenario-card">
+        <div class="scenario-top">
+          <span>COMERCIAL</span>
+          <strong>Lead parou de responder</strong>
+        </div>
+
+        <div class="scenario-flow">
+          <div>Lead parado</div>
+          <i></i>
+          <div>Acompanha</div>
+          <i></i>
+          <div>Envia follow-up</div>
+          <i></i>
+          <div>Classifica interesse</div>
+          <i></i>
+          <div>Agenda retorno</div>
+        </div>
+
+        <p>
+          O selfware monitora leads sem resposta, executa follow-ups,
+          identifica intenção e organiza o próximo passo comercial.
+        </p>
+      </article>
+
+      <article class="scenario-card">
+        <div class="scenario-top">
+          <span>ESCRITÓRIO</span>
+          <strong>Documento recebido</strong>
+        </div>
+
+        <div class="scenario-flow">
+          <div>Documento entra</div>
+          <i></i>
+          <div>Processa</div>
+          <i></i>
+          <div>Extrai dados</div>
+          <i></i>
+          <div>Atualiza sistema</div>
+          <i></i>
+          <div>Notifica responsável</div>
+        </div>
+
+        <p>
+          Documentos, formulários e anexos são lidos, classificados,
+          transformados em dados úteis e enviados para o fluxo correto.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="before-after" class="section before-after reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>ANTES VS DEPOIS</span>
+
+      <h2>
+        De operação manual para operação acompanhada.
+      </h2>
+
+      <p>
+        Selfwares reduzem a dependência de pessoas executando tarefas repetitivas,
+        lembrando prazos e transferindo informação entre ferramentas.
+      </p>
+    </div>
+
+    <div class="before-after-grid">
+      <article class="compare-card before">
+        <div class="compare-label">ANTES</div>
+
+        <ul>
+          <li>Follow-ups esquecidos</li>
+          <li>Atendimento lento</li>
+          <li>Tarefas manuais repetitivas</li>
+          <li>Informações espalhadas</li>
+          <li>Processos dependentes de memória humana</li>
+        </ul>
+      </article>
+
+      <article class="compare-card after">
+        <div class="compare-label">DEPOIS</div>
+
+        <ul>
+          <li>Respostas e acompanhamentos automáticos</li>
+          <li>Execução contínua de tarefas</li>
+          <li>Fluxos monitorados</li>
+          <li>Operação centralizada</li>
+          <li>Responsáveis notificados no momento certo</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="section execution-feed-section reveal">
+  <div class="container execution-layout">
+    <div class="section-header execution-copy">
+      <span>EXECUTION FEED</span>
+
+      <h2>
+        Workflows vivos, eventos rastreáveis e tarefas executadas.
+      </h2>
+
+      <p>
+        Selfwares não apenas respondem. Eles mantêm fluxos em movimento,
+        registram eventos, executam tarefas e preservam histórico operacional.
+      </p>
+    </div>
+
+    <div class="execution-feed" id="execution-feed" aria-label="Feed de execução operacional">
+      <figure class="wide-visual-card">
+        <img
+          src="{{ url_for('static', filename='img/a-sleek-ai-agents-observability-dashboar_fIOqoxT2Wii_D_qsRIgFag_eSLVapvGSb6EixJn8h5-jw_sd.jpeg') }}"
+          alt="Dashboard de observabilidade de agentes com telemetria, logs e eventos em tempo real"
+          loading="lazy"
+        >
+      </figure>
+
+      <div class="feed-header">
+        <span class="status-dot"></span>
+        <strong>Live operational stream</strong>
+      </div>
+
+      <div class="feed-item">
+        <span class="feed-time">08:42</span>
+        <div>
+          <strong>Documento classificado</strong>
+          <p>Contrato recebido, extraído e enviado para validação operacional.</p>
+        </div>
+      </div>
+
+      <div class="feed-item">
+        <span class="feed-time">08:46</span>
+        <div>
+          <strong>Follow-up executado</strong>
+          <p>Cliente sem resposta recebeu confirmação automática via WhatsApp.</p>
+        </div>
+      </div>
+
+      <div class="feed-item">
+        <span class="feed-time">08:51</span>
+        <div>
+          <strong>Anomalia visual sinalizada</strong>
+          <p>Imagem técnica marcada para revisão por possível corrosão superficial.</p>
+        </div>
+      </div>
+
+      <div class="feed-item">
+        <span class="feed-time">08:57</span>
+        <div>
+          <strong>Workflow concluído</strong>
+          <p>Dados sincronizados entre formulário, CRM e planilha operacional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section technical-cases reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>CASES TÉCNICOS</span>
+
+      <h2>
+        Experiência aplicada além de automações genéricas.
+      </h2>
+
+      <p>
+        A base técnica da Aeria Apps inclui visão computacional, inspeção visual,
+        análise industrial e sistemas capazes de operar sobre dados do mundo real.
+      </p>
+    </div>
+
+    <div class="technical-cases-grid">
+      <article class="technical-case-card featured">
+        <figure class="case-visual">
+          <img
+            src="{{ url_for('static', filename='img/gpt-image-2_Advanced_industrial_computer_vision_platform_analyzing_energy_infrastructure_cor-0.jpg') }}"
+            alt="Interface premium de visão computacional industrial para inspeção de infraestrutura"
+            loading="lazy"
+          >
+        </figure>
+
+        <div class="case-label">VISÃO COMPUTACIONAL</div>
+
+        <h3>Drones, inspeção e análise visual operacional</h3>
+
+        <p>
+          Processamento de imagens capturadas em campo para apoiar inspeções,
+          classificação visual, identificação de padrões e priorização operacional.
+        </p>
+
+        <div class="case-tags">
+          <span>Drones</span>
+          <span>Inspeção</span>
+          <span>Classificação visual</span>
+        </div>
+      </article>
+
+      <article class="technical-case-card">
+        <div class="case-label">TERMOGRAFIA</div>
+
+        <h3>Análise térmica aplicada</h3>
+
+        <p>
+          Interpretação de imagens térmicas para apoiar diagnósticos,
+          triagem técnica e detecção de pontos críticos.
+        </p>
+      </article>
+
+      <article class="technical-case-card">
+        <div class="case-label">CORROSÃO</div>
+
+        <h3>Detecção e classificação visual</h3>
+
+        <p>
+          Identificação de indícios visuais de corrosão,
+          degradação superficial e condições relevantes para inspeção.
+        </p>
+      </article>
+
+      <article class="technical-case-card">
+        <div class="case-label">OPERAÇÃO INDUSTRIAL</div>
+
+        <h3>Estados operacionais e evidências</h3>
+
+        <p>
+          Organização de evidências, eventos, imagens e documentos
+          para apoiar fluxos técnicos e decisões operacionais.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="testimonials" class="section testimonials reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>DEPOIMENTOS</span>
+      <h2>Quem usa selfware sente a diferença.</h2>
+      <p>O que clientes e parceiros dizem sobre reduzir fricção operacional com sistemas autônomos.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      {% if content.testimonials %}
+      {% for t in content.testimonials %}
+      <article class="testimonial-card reveal-scale" style="--i: {{ loop.index0 }}">
+        <div class="testimonial-body">
+          <svg class="testimonial-quote" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M10 18c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4v2c0 4.4-3.6 8-8 8v-4c2.2 0 4-1.8 4-4v-2zm12 0c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4v2c0 4.4-3.6 8-8 8v-4c2.2 0 4-1.8 4-4v-2z" fill="currentColor" opacity="0.15"/>
+          </svg>
+          <p>{{ t.text }}</p>
+        </div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">{{ t.name[0] }}{{ t.name.split()[-1][0] }}</div>
+          <div>
+            <strong>{{ t.name }}</strong>
+            <span>{{ t.role }}</span>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section id="infrastructure" class="section infrastructure reveal">
+  <div class="container">
+    <div class="section-header">
+      <span>INFRAESTRUTURA</span>
+
+      <h2>
+        Infraestrutura para agentes confiáveis.
+      </h2>
+
+      <p>
+        Selfwares não dependem de prompts improvisados. Eles combinam engenharia,
+        observabilidade, memória, execução e arquitetura para operar com consistência.
+      </p>
+    </div>
+
+    <div class="infrastructure-layout">
+      <div class="pipeline-card infrastructure-visual-card">
+        <img
+          class="section-visual"
+          src="{{ url_for('static', filename='img/a-sophisticated-technical-diagram-visual_DhRgavtsVXes0bfxFqNMwg_Rsmfw4x6QsSOOcItfqiJZQ_sd.jpeg') }}"
+          alt="Diagrama técnico de arquitetura de agentes com memória, APIs, workflows e observabilidade"
+          loading="lazy"
+        >
+
+        <div class="visual-overlay-card">
+          <div class="pipeline-title">OPERATIONAL PIPELINE</div>
+
+          <div class="system-status">
+            <div>
+              <span class="status-dot"></span>
+              <strong>Operação contínua</strong>
+            </div>
+
+            <p>
+              Agentes monitorados, com rastreabilidade de ações,
+              logs operacionais e recuperação planejada.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="infrastructure-grid">
+        <article class="agent-status-card">
+          <div class="infrastructure-label">AGENT RUNTIME</div>
+
+          <h3>Status operacional</h3>
+
+          <div class="agent-status-list">
+            <div>
+              <span class="status-dot"></span>
+              <strong>Online</strong>
+            </div>
+
+            <div>
+              <span class="status-dot"></span>
+              <strong>Memory synced</strong>
+            </div>
+
+            <div>
+              <span class="status-dot"></span>
+              <strong>14 tasks executed</strong>
+            </div>
+
+            <div>
+              <span class="status-dot"></span>
+              <strong>2 integrations active</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="infrastructure-card">
+          <div class="infrastructure-label">OBSERVABILIDADE</div>
+
+          <h3>Monitoramento contínuo</h3>
+
+          <p>
+            Logs, estados operacionais e recuperação automática de falhas
+            para manter processos críticos sob controle.
+          </p>
+        </article>
+
+        <article class="infrastructure-card">
+          <div class="infrastructure-label">MEMÓRIA CONTEXTUAL</div>
+
+          <h3>Contexto acumulado</h3>
+
+          <p>
+            Agentes que acumulam contexto operacional
+            e melhoram continuamente suas respostas e decisões.
+          </p>
+        </article>
+
+        <article class="infrastructure-card">
+          <div class="infrastructure-label">INTEGRAÇÕES</div>
+
+          <h3>Sistemas conectados</h3>
+
+          <p>
+            WhatsApp, ERPs, CRMs, documentos, APIs e workflows
+            operando dentro do mesmo fluxo.
+          </p>
+        </article>
+
+        <article class="infrastructure-card">
+          <div class="infrastructure-label">EXECUÇÃO AUTÔNOMA</div>
+
+          <h3>Ação orientada por eventos</h3>
+
+          <p>
+            Sistemas capazes de reagir a eventos,
+            executar tarefas e manter operações contínuas.
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section contact-section reveal">
+  <div class="container contact-layout">
+
+    <div class="contact-box" style="margin:0">
+      <div>
+        <span>DIAGNÓSTICO OPERACIONAL</span>
+        <h2>
+          Vamos encontrar tarefas manuais que podem sair da sua rotina.
+        </h2>
+        <p style="color:var(--muted-strong);font-size:18px;line-height:1.7;margin:18px 0 28px;max-width:600px">
+          Conte um pouco sobre sua operação. Em até 2 dias úteis eu mapeio
+          gargalos, atrasos e tarefas repetitivas que um selfware pode assumir.
+        </p>
+      </div>
+
+      <a class="btn primary large" href="https://wa.me/551231973198?text=Olá!%20Quero%20mapear%20tarefas%20manuais%20da%20minha%20operação.">
+        Falar no WhatsApp agora
+      </a>
+    </div>
+
+    <div class="contact-form-card">
+      <h3>Ou preencha o formulário</h3>
+      <p>Deixe seus dados e eu entro em contato para um diagnóstico gratuito.</p>
+
+      <div class="form-feedback" id="form-feedback"></div>
+
+      <form id="contact-form" novalidate>
+        <div class="form-group">
+          <label for="form-name">Nome</label>
+          <input class="form-field" id="form-name" name="name" type="text" placeholder="Seu nome" required>
+        </div>
+
+        <div class="form-group">
+          <label for="form-email">E-mail</label>
+          <input class="form-field" id="form-email" name="email" type="email" placeholder="voce@exemplo.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="form-whatsapp">WhatsApp</label>
+          <input class="form-field" id="form-whatsapp" name="whatsapp" type="tel" placeholder="(12) 99999-9999">
+        </div>
+
+        <div class="form-group">
+          <label for="form-operation">Descreva brevemente sua operação</label>
+          <textarea class="form-field" id="form-operation" name="message" placeholder="Ex: clínica com 3 recepcionistas, agendamento manual, 40% de faltas sem follow-up..." rows="4"></textarea>
+        </div>
+
+        <button class="btn primary form-submit" type="submit">Solicitar diagnóstico gratuito</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span>© 2026 Aeria Apps</span>
+    <span>Selfwares • Sistemas Autônomos • IA Operacional</span>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp button -->
+<a class="sticky-wa btn" href="https://wa.me/551231973198?text=Olá!%20Vim%20pelo%20site%20da%20Aeria%20Apps%20e%20gostaria%20de%20saber%20mais." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <span class="wa-icon">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </span>
+  Fale conosco
+</a>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ─── Online Counter ─── */
+  (function() {
+    var launchStr = '{{ content.launch_date or "2026-05-01" }}';
+    if (launchStr) {
+      var launch = new Date(launchStr + 'T00:00:00');
+      var now = new Date();
+      var days = Math.floor((now - launch) / (1000 * 60 * 60 * 24));
+      if (days >= 0) {
+        var el = document.getElementById('online-days');
+        if (el) el.textContent = days;
+      }
+    }
+  })();
+
+  /* ─── Mobile Menu ─── */
+  var toggle = document.querySelector('.menu-toggle');
+  var mobileNav = document.querySelector('.mobile-nav');
+  var mobileLinks = document.querySelectorAll('.mobile-link');
+
+  if (toggle && mobileNav) {
+    toggle.addEventListener('click', function() {
+      var isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', !isOpen);
+      mobileNav.classList.toggle('open');
+      mobileNav.setAttribute('aria-hidden', isOpen);
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    });
+
+    mobileLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        toggle.setAttribute('aria-expanded', 'false');
+        mobileNav.classList.remove('open');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  /* ─── Scroll Reveal ─── */
+  if ('IntersectionObserver' in window) {
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+      revealObserver.observe(el);
+    });
+
+    // staggered children
+    document.querySelectorAll('.reveal-stagger').forEach(function(parent) {
+      var children = parent.children;
+      for (var i = 0; i < children.length; i++) {
+        children[i].style.setProperty('--i', i);
+        revealObserver.observe(children[i]);
+      }
+    });
+  } else {
+    // fallback: show everything
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }
+
+  /* ─── Animated Stat Counters ─── */
+  var statNumbers = document.querySelectorAll('.stat-number');
+  if (statNumbers.length && 'IntersectionObserver' in window) {
+    var counterObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          var target = parseInt(el.getAttribute('data-target'), 10);
+          if (!target) return;
+          counterObserver.unobserve(el);
+
+          var duration = 1500;
+          var steps = 30;
+          var increment = target / steps;
+          var current = 0;
+          var stepTime = duration / steps;
+
+          function tick() {
+            current += increment;
+            if (current >= target) {
+              el.textContent = target;
+              return;
+            }
+            el.textContent = Math.round(current);
+            setTimeout(tick, stepTime);
+          }
+          tick();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statNumbers.forEach(function(el) {
+      counterObserver.observe(el);
+    });
+  } else {
+    // fallback: show target values immediately
+    statNumbers.forEach(function(el) {
+      el.textContent = el.getAttribute('data-target') || '0';
+    });
+  }
+
+  /* ─── Dynamic Execution Feed ─── */
+  var feedContainer = document.getElementById('execution-feed');
+  if (feedContainer) {
+    var feedEvents = [
+      { time: '09:12', title: 'Documento classificado', desc: 'Nota fiscal recebida, extraída e enviada para contabilidade.' },
+      { time: '09:18', title: 'Follow-up automático enviado', desc: 'Lead sem resposta há 3 dias recebeu contato via WhatsApp.' },
+      { time: '09:24', title: 'Fluxo de aprovação concluído', desc: 'Orçamento aprovado e encaminhado para execução.' },
+      { time: '09:31', title: 'Anomalia detectada', desc: 'Imagem de inspeção sinalizada com possível desgaste mecânico.' },
+      { time: '09:37', title: 'Workflow sincronizado', desc: 'Dados reconciliados entre CRM, planilha e sistema interno.' },
+    ];
+    var feedIndex = 0;
+
+    // wrap all existing feed-items for replacement
+    var existingItems = feedContainer.querySelectorAll('.feed-item');
+    var feedWrapper = document.createElement('div');
+    feedWrapper.setAttribute('aria-live', 'polite');
+    feedWrapper.setAttribute('aria-label', 'Eventos operacionais em tempo real');
+
+    // show first 3 events immediately
+    function renderEvents(count) {
+      feedWrapper.innerHTML = '';
+      for (var i = 0; i < count && i < feedEvents.length; i++) {
+        var ev = feedEvents[(feedIndex - count + i + feedEvents.length) % feedEvents.length];
+        var el = document.createElement('div');
+        el.className = 'feed-item';
+        el.innerHTML = '<span class="feed-time">' + ev.time + '</span><div><strong>' + ev.title + '</strong><p>' + ev.desc + '</p></div>';
+        feedWrapper.appendChild(el);
+      }
+      feedContainer.innerHTML = '';
+      feedContainer.appendChild(feedWrapper);
+    }
+
+    renderEvents(3);
+
+    // cycle a new event every 8 seconds
+    setInterval(function() {
+      var ev = feedEvents[feedIndex % feedEvents.length];
+      feedIndex++;
+      var el = document.createElement('div');
+      el.className = 'feed-item live-entry';
+      el.innerHTML = '<span class="feed-time">' + ev.time + '</span><div><strong>' + ev.title + '</strong><p>' + ev.desc + '</p></div>';
+      feedWrapper.insertBefore(el, feedWrapper.firstChild);
+
+      // keep max 5 items
+      while (feedWrapper.children.length > 5) {
+        feedWrapper.removeChild(feedWrapper.lastChild);
+      }
+    }, 8000);
+  }
+
+  /* ─── Contact Form ─── */
+  var contactForm = document.getElementById('contact-form');
+  var feedbackEl = document.getElementById('form-feedback');
+
+  if (contactForm && feedbackEl) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var data = {
+        name: document.getElementById('form-name').value.trim(),
+        email: document.getElementById('form-email').value.trim(),
+        whatsapp: document.getElementById('form-whatsapp').value.trim(),
+        message: document.getElementById('form-operation').value.trim()
+      };
+
+      if (!data.name || !data.email) {
+        feedbackEl.className = 'form-feedback error';
+        feedbackEl.textContent = 'Por favor, preencha nome e e-mail.';
+        return;
+      }
+
+      feedbackEl.className = 'form-feedback success';
+      feedbackEl.textContent = 'Enviando...';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/contact', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          feedbackEl.className = 'form-feedback success';
+          feedbackEl.textContent = 'Recebi sua mensagem! Entro em contato em até 2 dias úteis.';
+          contactForm.reset();
+        } else {
+          feedbackEl.className = 'form-feedback error';
+          feedbackEl.textContent = 'Erro ao enviar. Tente pelo WhatsApp ou mande um e-mail para admin@aeria-cs.com.br.';
+        }
+      };
+
+      xhr.onerror = function() {
+        feedbackEl.className = 'form-feedback error';
+        feedbackEl.textContent = 'Erro de conexão. Tente novamente ou fale direto no WhatsApp.';
+      };
+
+      xhr.send(JSON.stringify(data));
+    });
+  }
+
+})();
+</script>
+
+{% endblock %}

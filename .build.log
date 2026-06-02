@@ -1,0 +1,13 @@
+2026-05-26T08:49:51.070003 Project directory: /root/aeria-apps-site
+2026-05-26T08:49:51.070562 Pulling project images
+2026-05-26T08:49:51.071168 ------------------------------
+2026-05-26T08:49:51.130793  app Skipped No image to be pulled
+2026-05-26T08:49:51.135389 ------------------------------
+2026-05-26T08:49:51.135514 Deploying project
+2026-05-26T08:49:51.136131 ------------------------------
+2026-05-26T08:49:51.217789  Container aeria-apps-site-app-1 Recreate 
+2026-05-26T08:49:52.378349  Container aeria-apps-site-app-1 Recreated 
+2026-05-26T08:49:52.379546  Container aeria-apps-site-app-1 Starting 
+2026-05-26T08:49:52.605656  Container aeria-apps-site-app-1 Started 
+2026-05-26T08:49:52.610381 ------------------------------
+2026-05-26T08:49:52.610441 Project deployed successfully

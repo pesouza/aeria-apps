@@ -1,0 +1,22 @@
+services:
+  crm:
+    build: .
+    restart: unless-stopped
+    environment:
+      CRM_SECRET_KEY: ${CRM_SECRET_KEY:-troque-essa-chave-em-producao}
+      CRM_ADMIN_PASSWORD: ${CRM_ADMIN_PASSWORD:-admin123}
+      SITE_URL: ${SITE_URL:-https://aeria-apps.com.br}
+    volumes:
+      - ./data:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.aeria-crm.rule=Host(`crm.aeria-apps.com.br`)
+      - traefik.http.routers.aeria-crm.entrypoints=websecure
+      - traefik.http.routers.aeria-crm.tls.certresolver=letsencrypt
+      - traefik.http.services.aeria-crm.loadbalancer.server.port=5001
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

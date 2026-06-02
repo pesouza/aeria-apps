@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aeria CRM — Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      background: #050814;
+      color: #f5f7fb;
+      font-family: 'Inter', -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .login-card {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 40px 36px;
+      width: 380px;
+      max-width: 90vw;
+    }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    p { color: #9ea8c5; font-size: 14px; margin-bottom: 24px; }
+    input {
+      width: 100%; padding: 12px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; color: #f5f7fb;
+      font-size: 15px; outline: none;
+    }
+    input:focus { border-color: #6d8dff; }
+    button {
+      width: 100%; padding: 12px; margin-top: 16px;
+      background: #6d8dff; color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: #3d6dff; }
+    .flash { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+    .flash.error { background: rgba(255,80,80,0.15); color: #ff6b6b; border: 1px solid rgba(255,80,80,0.3); }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h1>Aeria CRM</h1>
+    <p>Painel administrativo</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    <form method="post">
+      <input type="password" name="password" placeholder="Senha do painel" autofocus>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+</body>
+</html>

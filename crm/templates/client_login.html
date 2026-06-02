@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar — AerIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='crm.css') }}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #0a0a0f; margin: 0; font-family: Inter, sans-serif; }
+    .auth-card { background: #13131a; border: 1px solid #1e1e2a; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; margin: 20px; }
+    .auth-card h1 { color: #fff; font-size: 24px; margin: 0 0 8px; }
+    .auth-card p { color: #888; margin: 0 0 24px; font-size: 14px; }
+    .auth-card label { display: block; color: #aaa; font-size: 13px; margin-bottom: 4px; font-weight: 500; }
+    .auth-card input { width: 100%; padding: 12px 14px; background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 8px; color: #fff; font-size: 14px; box-sizing: border-box; margin-bottom: 16px; transition: border-color .2s; }
+    .auth-card input:focus { outline: none; border-color: #6c5ce7; }
+    .auth-card button { width: 100%; padding: 12px; background: #6c5ce7; border: none; border-radius: 8px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .auth-card button:hover { background: #5a4bd1; }
+    .auth-card .error { background: #2d1515; border: 1px solid #4a1a1a; border-radius: 8px; padding: 10px 14px; color: #ff6b6b; font-size: 13px; margin-bottom: 16px; }
+    .auth-card .success { background: #152d1a; border: 1px solid #1a4a22; border-radius: 8px; padding: 10px 14px; color: #51cf66; font-size: 13px; margin-bottom: 16px; }
+    .auth-card .footer { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+    .auth-card .footer a { color: #6c5ce7; text-decoration: none; }
+    .auth-card .logo { text-align: center; margin-bottom: 24px; }
+    .auth-card .logo img { height: 36px; }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='../static/img/aeriaApps-logo.png') }}" alt="AerIA">
+    </div>
+    <h1>Entrar</h1>
+    <p>Acesse sua área de cliente</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('auth_login') }}">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" required autofocus>
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <div class="footer">
+      Ainda não tem conta? <a href="{{ url_for('auth_register') }}">Cadastre-se</a>
+    </div>
+  </div>
+</body>
+</html>

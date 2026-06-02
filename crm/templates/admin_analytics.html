@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aeria CRM — Analytics</title>
+  <link rel="stylesheet" href="/static/crm.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo">A</div><span style="font-weight:600">Aeria CRM</span></div>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/contacts">Contatos</a>
+      <a href="/admin/comments">Comentários</a>
+      <a href="/admin/analytics" class="active">Analytics</a>
+      <a href="/">Ver site</a>
+      <a href="/admin/logout">Sair</a>
+    </nav>
+  </div>
+  <div class="wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>Analytics</h1>
+      <div style="display:flex;gap:8px">
+        <a href="/admin/analytics?days=7" class="btn {% if days == 7 %}active{% endif %}">7 dias</a>
+        <a href="/admin/analytics?days=14" class="btn {% if days == 14 %}active{% endif %}">14 dias</a>
+        <a href="/admin/analytics?days=30" class="btn {% if days == 30 %}active{% endif %}">30 dias</a>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:20px">
+      <div class="card">
+        <div class="label">Total de acessos</div>
+        <div class="value blue">{{ total_views }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Acessos hoje</div>
+        <div class="value blue">{{ today_views }}</div>
+      </div>
+      <div class="card">
+        <div class="label">Visitantes únicos hoje</div>
+        <div class="value">{{ unique_today }}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3 style="margin-bottom:12px;font-size:16px">Acessos por dia</h3>
+      <div id="chart" style="height:240px;display:flex;align-items:end;gap:4px;padding-top:20px">
+      </div>
+      <script>
+        var data = {{ views_by_day|safe }};
+        if (data && data.length) {
+          var max = Math.max(...data.map(function(d){return d.views}), 1);
+          var container = document.getElementById('chart');
+          data.forEach(function(d){
+            var bar = document.createElement('div');
+            bar.style.cssText = 'flex:1;background:linear-gradient(to top,#6d8dff,#8ba4ff);border-radius:4px 4px 0 0;height:'+(d.views/max*210)+'px;min-height:3px;position:relative;transition:height 0.3s';
+            var val = document.createElement('div');
+            val.style.cssText = 'position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:#f5f7fb';
+            val.textContent = d.views;
+            bar.appendChild(val);
+            var label = document.createElement('div');
+            label.style.cssText = 'position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:#9ea8c5;white-space:nowrap';
+            var parts = d.day.split('-');
+            label.textContent = parts[2]+'/'+parts[1];
+            bar.appendChild(label);
+            container.appendChild(bar);
+          });
+        }
+      </script>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3 style="margin-bottom:12px;font-size:16px">Páginas mais acessadas ({{ days }} dias)</h3>
+      {% if views_by_path %}
+      <table class="table">
+        <tr><th>Página</th><th>Acessos</th></tr>
+        {% for p in views_by_path %}
+        <tr>
+          <td>{{ p.path }}</td>
+          <td><strong>{{ p.views }}</strong></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p style="color:#9ea8c5">Sem dados.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

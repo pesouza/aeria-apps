@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — {{ user.name }} — AerIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #fff; font-family: Inter, sans-serif; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #0f0f17; border-bottom: 1px solid #1a1a24; }
+    .topbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .topbar .brand img { height: 28px; }
+    .topbar .brand span { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar .user-menu { display: flex; align-items: center; gap: 12px; }
+    .topbar .user-menu span { color: #888; font-size: 13px; }
+    .topbar .user-menu a { color: #6c5ce7; text-decoration: none; font-size: 13px; }
+    .topbar .user-menu a:hover { text-decoration: underline; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    .greeting h1 { font-size: 24px; margin-bottom: 4px; }
+    .greeting p { color: #888; font-size: 14px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 32px 0; }
+    .stat-card { background: #13131a; border: 1px solid #1e1e2a; border-radius: 12px; padding: 20px; }
+    .stat-card h3 { color: #6c5ce7; font-size: 28px; margin: 0 0 4px; }
+    .stat-card p { color: #888; font-size: 13px; margin: 0; }
+    .section-title { font-size: 18px; margin: 32px 0 12px; color: #ccc; }
+    .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .resource-card { display: block; background: #13131a; border: 1px solid #1e1e2a; border-radius: 12px; padding: 20px; text-decoration: none; transition: border-color .2s; }
+    .resource-card:hover { border-color: #6c5ce7; }
+    .resource-card h3 { color: #fff; font-size: 16px; margin: 0 0 4px; }
+    .resource-card p { color: #888; font-size: 13px; margin: 0; }
+    .badge { display: inline-block; background: #1a1a2e; color: #6c5ce7; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="https://aeria-apps.com.br">
+      <img src="{{ url_for('static', filename='../static/img/aeriaApps-logo.png') }}" alt="AerIA">
+      <span>Cliente</span>
+    </a>
+    <div class="user-menu">
+      <span>{{ user.name }}</span>
+      <span class="badge">{{ user.tier|upper }}</span>
+      <a href="{{ url_for('auth_logout') }}">Sair</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="greeting">
+      <h1>Olá, {{ user.name.split()[0] }} 👋</h1>
+      <p>Bem-vindo à sua área de cliente AerIA. Gerencie seus agentes, cursos e recursos.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>—</h3>
+        <p>Meus agentes</p>
+      </div>
+      <div class="stat-card">
+        <h3>0</h3>
+        <p>Cursos concluídos</p>
+      </div>
+      <div class="stat-card">
+        <h3>{{ user.tier|upper }}</h3>
+        <p>Plano atual</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">📚 Recursos disponíveis</h2>
+    <div class="resource-grid">
+      <a href="{{ url_for('academy_index') }}" class="resource-card">
+        <h3>🎓 Selfware Academy</h3>
+        <p>Cursos para construir seus próprios agentes de IA autônomos</p>
+        {% if user.tier == 'free' %}<span class="badge">GRÁTIS</span>{% endif %}
+      </a>
+      <a href="{{ url_for('template_library') }}" class="resource-card">
+        <h3>📋 Template Library</h3>
+        <p>Modelos prontos de agentes, prompts e skills</p>
+      </a>
+      <a href="#" class="resource-card">
+        <h3>💬 Comunidade</h3>
+        <p>Dúvidas, projetos, cases de sucesso e networking</p>
+      </a>
+      <a href="{{ url_for('events_index') }}" class="resource-card">
+        <h3>📅 Eventos ao Vivo</h3>
+        <p>Lives, workshops e Selfware Roast — participe e aprenda</p>
+      </a>
+      <a href="{{ url_for('community_index') }}" class="resource-card">
+        <h3>💬 Comunidade</h3>
+        <p>Fórum de discussão, dúvidas e cases de sucesso</p>
+      </a>
+    </div>
+  </div>
+  <div class="welcome-footer">
+</html>

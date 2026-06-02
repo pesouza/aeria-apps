@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Template Library — AerIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #fff; font-family: Inter, sans-serif; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #0f0f17; border-bottom: 1px solid #1a1a24; }
+    .topbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .topbar .brand span { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar nav a { color: #888; text-decoration: none; font-size: 13px; margin-left: 20px; transition: color .2s; }
+    .topbar nav a:hover, .topbar nav a.active { color: #6c5ce7; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+    .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filter-btn { padding: 6px 14px; background: #13131a; border: 1px solid #1e1e2a; border-radius: 6px; color: #888; font-size: 13px; cursor: pointer; transition: all .2s; }
+    .filter-btn:hover, .filter-btn.active { border-color: #6c5ce7; color: #6c5ce7; }
+    .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .template-card { background: #13131a; border: 1px solid #1e1e2a; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; transition: border-color .2s; }
+    .template-card:hover { border-color: #6c5ce7; }
+    .template-card .head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .template-card .head .icon { font-size: 24px; }
+    .template-card .head h2 { font-size: 15px; color: #fff; margin: 0; }
+    .template-card p { color: #888; font-size: 13px; flex: 1; margin-bottom: 12px; line-height: 1.5; }
+    .template-card .meta { display: flex; justify-content: space-between; align-items: center; }
+    .template-card .meta span { font-size: 12px; color: #666; }
+    .template-card .meta .badge { background: #1a1a2e; color: #6c5ce7; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .template-card .download-btn { padding: 8px 16px; background: #6c5ce7; border: none; border-radius: 6px; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; transition: background .2s; }
+    .template-card .download-btn:hover { background: #5a4bd1; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="{{ url_for('client_dashboard') }}">
+      <span>🏠 AerIA</span>
+    </a>
+    <nav>
+      <a href="{{ url_for('client_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('academy_index') }}">Academy</a>
+      <a href="{{ url_for('template_library') }}" class="active">Templates</a>
+      <a href="{{ url_for('auth_logout') }}">Sair</a>
+    </nav>
+  </div>
+  <div class="container">
+    <h1>📋 Template Library</h1>
+    <p class="subtitle">Modelos prontos de agentes, prompts e skills para acelerar suas construções</p>
+
+    <div class="filters">
+      <span class="filter-btn active" onclick="filterTemplates('all')">Todos</span>
+      {% for cat in categories %}
+      <span class="filter-btn" onclick="filterTemplates('{{ cat }}')">{{ cat }}</span>
+      {% endfor %}
+    </div>
+
+    <div class="template-grid">
+      {% for t in templates %}
+      <div class="template-card" data-category="{{ t.category }}">
+        <div class="head">
+          <span class="icon">{{ t.icon }}</span>
+          <h2>{{ t.title }}</h2>
+        </div>
+        <p>{{ t.description }}</p>
+        <div class="meta">
+          <span>{{ t.category }}</span>
+          <span class="badge">{{ t.tier|upper }}</span>
+        </div>
+        <div style="margin-top:12px">
+          <a href="{{ url_for('template_download', template_key=t.key) }}" class="download-btn">⬇ Baixar</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+    function filterTemplates(cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('.template-card').forEach(c => {
+        c.style.display = (cat === 'all' || c.dataset.category === cat) ? 'flex' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

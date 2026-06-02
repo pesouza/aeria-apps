@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aeria CRM — Comentários</title>
+  <link rel="stylesheet" href="/static/crm.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo">A</div><span style="font-weight:600">Aeria CRM</span></div>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/contacts">Contatos</a>
+      <a href="/admin/comments" class="active">Comentários</a>
+      <a href="/admin/analytics">Analytics</a>
+      <a href="/">Ver site</a>
+      <a href="/admin/logout">Sair</a>
+    </nav>
+  </div>
+  <div class="wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <h1>Comentários ({{ total }})</h1>
+      <div style="display:flex;gap:8px">
+        <a href="/admin/comments?filter=pending" class="btn {% if filter == 'pending' %}active{% endif %}">Pendentes</a>
+        <a href="/admin/comments?filter=spam" class="btn {% if filter == 'spam' %}active{% endif %}">Spam</a>
+        <a href="/admin/comments?filter=approved" class="btn {% if filter == 'approved' %}active{% endif %}">Aprovados</a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+
+    <div class="card" style="margin-top:16px">
+      {% if comments %}
+        {% for c in comments %}
+        <div style="padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">
+            <div>
+              <strong>{{ c.name }}</strong>
+              <span style="color:#9ea8c5;font-size:12px">· {{ c.email }} · {{ c.created_at[:19] }}</span>
+              {% if c.is_spam %}<span class="pill lost" style="margin-left:6px">SPAM</span>{% endif %}
+              {% if c.is_approved and not c.is_spam %}<span class="pill converted" style="margin-left:6px">APROVADO</span>{% endif %}
+              {% if not c.is_spam and not c.is_approved %}<span class="pill new" style="margin-left:6px">PENDENTE</span>{% endif %}
+            </div>
+            <div style="display:flex;gap:4px">
+              {% if not c.is_approved and not c.is_spam %}
+              <form method="post" action="/admin/comments/{{ c.id }}/approve" style="display:inline">
+                <button class="btn small active">Aprovar</button>
+              </form>
+              {% endif %}
+              {% if not c.is_spam %}
+              <form method="post" action="/admin/comments/{{ c.id }}/spam" style="display:inline">
+                <button class="btn small" style="background:rgba(240,201,64,0.2);color:#f0c940">Spam</button>
+              </form>
+              {% endif %}
+              <form method="post" action="/admin/comments/{{ c.id }}/delete" style="display:inline"
+                    onsubmit="return confirm('Remover comentário?')">
+                <button class="btn small" style="background:rgba(255,80,80,0.2);color:#ff6b6b">Excluir</button>
+              </form>
+            </div>
+          </div>
+          <p style="margin-top:8px;color:#c7d0ea;font-size:14px">{{ c.content }}</p>
+          <div style="color:#9ea8c5;font-size:12px;margin-top:4px">Página: {{ c.page_path }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:#9ea8c5">Nenhum comentário nesta categoria.</p>
+      {% endif %}
+    </div>
+
+    {% if total > limit %}
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:center">
+      {% for p in range(1, (total // limit) + 2) %}
+        <a href="/admin/comments?filter={{ filter }}&page={{ p }}" class="btn {% if p == page %}active{% endif %}">{{ p }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

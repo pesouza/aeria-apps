@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  .card {
+    width: 1200px; height: 630px;
+    background: linear-gradient(160deg, #050814 0%, #0b142e 35%, #1a0a2e 70%, #050814 100%);
+    position: relative; display: flex; flex-direction: column; justify-content: center;
+    padding: 60px 72px; box-sizing: border-box;
+  }
+  /* Grid overlay */
+  .card::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(61, 109, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(61, 109, 255, 0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 70%);
+  }
+  /* Glow accents */
+  .glow-1 {
+    position: absolute; top: -120px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0, 200, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .glow-2 {
+    position: absolute; bottom: -100px; left: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .glow-3 {
+    position: absolute; top: 40%; left: 45%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .content { position: relative; z-index: 2; }
+  .logo-bar {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+  }
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #3d6dff, #8b5cf6);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: white; font-style: italic;
+    box-shadow: 0 8px 24px rgba(61, 109, 255, 0.3);
+  }
+  .brand-text {
+    font-size: 28px; font-weight: 800; color: #f0f4ff;
+    letter-spacing: -0.06em;
+  }
+  .brand-text span { color: #67e8f9; }
+  h1 {
+    font-size: 52px; font-weight: 900; color: #ffffff;
+    letter-spacing: -0.04em; line-height: 1.15;
+    max-width: 700px; margin-bottom: 18px;
+  }
+  .accent-line {
+    width: 80px; height: 4px;
+    background: linear-gradient(90deg, #3d6dff, #8b5cf6);
+    border-radius: 4px; margin-bottom: 22px;
+  }
+  p {
+    font-size: 22px; color: #94a3b8; line-height: 1.5;
+    max-width: 640px; margin-bottom: 28px;
+  }
+  .tag-row {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .tag {
+    padding: 8px 20px; border-radius: 999px;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.03em;
+    background: rgba(61, 109, 255, 0.1);
+    border: 1px solid rgba(61, 109, 255, 0.2);
+    color: #93c5fd; text-transform: uppercase;
+  }
+  .tag.accent {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: rgba(6, 182, 212, 0.2);
+    color: #67e8f9;
+  }
+  .tag.purple {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+  }
+  .url {
+    position: absolute; bottom: 40px; right: 72px;
+    font-size: 16px; color: rgba(148, 163, 184, 0.5);
+    font-weight: 500; letter-spacing: 0.02em;
+    z-index: 2;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow-1"></div>  <div class="glow-2"></div>  <div class="glow-3"></div>
+  <div class="content">
+    <div class="logo-bar">
+      <div class="logo-icon">A</div>
+      <div class="brand-text">Aeria <span>Apps</span></div>
+    </div>
+    <div class="accent-line"></div>
+    <h1>Sistemas autônomos<br>para reduzir fricção operacional</h1>
+    <p>Selfwares que assumem tarefas repetitivas, acompanham<br>processos e mantêm fluxos operacionais em movimento.</p>
+    <div class="tag-row">
+      <span class="tag">Selfware</span>
+      <span class="tag accent">Automação</span>
+      <span class="tag purple">PME</span>
+      <span class="tag">Operação</span>
+    </div>
+  </div>
+  <div class="url">aeria-apps.com.br</div>
+</div>
+</body>
+</html>

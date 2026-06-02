@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Selfware Academy — AerIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #fff; font-family: Inter, sans-serif; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #0f0f17; border-bottom: 1px solid #1a1a24; }
+    .topbar .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .topbar .brand span { color: #fff; font-weight: 600; font-size: 16px; }
+    .topbar nav a { color: #888; text-decoration: none; font-size: 13px; margin-left: 20px; transition: color .2s; }
+    .topbar nav a:hover, .topbar nav a.active { color: #6c5ce7; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
+    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .course-card { background: #13131a; border: 1px solid #1e1e2a; border-radius: 14px; padding: 24px; text-decoration: none; transition: all .2s; display: flex; flex-direction: column; }
+    .course-card:hover { border-color: #6c5ce7; transform: translateY(-2px); }
+    .course-card .icon { font-size: 40px; margin-bottom: 12px; }
+    .course-card h2 { color: #fff; font-size: 18px; margin-bottom: 8px; }
+    .course-card p { color: #888; font-size: 13px; margin-bottom: 16px; flex: 1; line-height: 1.5; }
+    .course-card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .course-card .meta .badge { background: #1a1a2e; color: #6c5ce7; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .course-card .meta .progress { color: #51cf66; }
+    .course-card .bar { height: 3px; background: #1e1e2a; border-radius: 2px; margin-top: 12px; overflow: hidden; }
+    .course-card .bar .fill { height: 100%; background: #6c5ce7; border-radius: 2px; transition: width .3s; }
+    .premium-lock { position: relative; }
+    .premium-lock::after { content: '🔒'; position: absolute; top: 12px; right: 12px; font-size: 18px; }
+    .back-link { display: inline-block; color: #6c5ce7; text-decoration: none; font-size: 13px; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="{{ url_for('client_dashboard') }}">
+      <span>🏠 AerIA</span>
+    </a>
+    <nav>
+      <a href="{{ url_for('client_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('academy_index') }}" class="active">Academy</a>
+      <a href="{{ url_for('template_library') }}">Templates</a>
+      <a href="{{ url_for('auth_logout') }}">Sair</a>
+    </nav>
+  </div>
+  <div class="container">
+    <h1>🎓 Selfware Academy</h1>
+    <p class="subtitle">Aprenda a construir agentes de IA autônomos do zero</p>
+
+    <div class="course-grid">
+      {% for course in courses %}
+      <a href="{{ url_for('academy_course', course_key=course.key) }}"
+         class="course-card {% if course.tier != 'free' %}premium-lock{% endif %}">
+        <div class="icon">{{ course.icon }}</div>
+        <h2>{{ course.title }}</h2>
+        <p>{{ course.description }}</p>
+        <div class="meta">
+          {% if course.total > 0 %}
+            <span class="progress">{{ course.completed }}/{{ course.total }} aulas</span>
+          {% else %}
+            <span class="progress">Em breve</span>
+          {% endif %}
+          <span class="badge">{{ course.tier|upper }}</span>
+        </div>
+        {% if course.total > 0 %}
+        <div class="bar"><div class="fill" style="width:{% if course.total > 0 %}{{ (course.completed / course.total * 100)|int }}{% else %}0{% endif %}%"></div></div>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

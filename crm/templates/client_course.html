@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ course.title }} — Selfware Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0f; color: #fff; font-family: Inter, sans-serif; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #0f0f17; border-bottom: 1px solid #1a1a24; }
+    .topbar a { color: #888; text-decoration: none; font-size: 13px; }
+    .topbar a:hover { color: #6c5ce7; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; display: flex; gap: 32px; }
+    .sidebar { width: 280px; flex-shrink: 0; }
+    .sidebar h2 { font-size: 16px; margin-bottom: 16px; color: #ccc; }
+    .sidebar .progress-text { font-size: 12px; color: #888; margin-bottom: 12px; }
+    .sidebar .bar { height: 3px; background: #1e1e2a; border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+    .sidebar .bar .fill { height: 100%; background: #6c5ce7; border-radius: 2px; }
+    .lesson-list { list-style: none; }
+    .lesson-list li { margin-bottom: 4px; }
+    .lesson-list a { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; text-decoration: none; color: #888; font-size: 13px; transition: all .15s; }
+    .lesson-list a:hover { background: #13131a; color: #ccc; }
+    .lesson-list a.active { background: #1a1a2e; color: #6c5ce7; font-weight: 500; }
+    .lesson-list a .status { font-size: 12px; }
+    .main { flex: 1; min-width: 0; }
+    .main h1 { font-size: 22px; margin-bottom: 4px; }
+    .main .course-icon { font-size: 32px; margin-bottom: 8px; }
+    .main .subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+    .main p { color: #aaa; font-size: 14px; line-height: 1.7; }
+    .start-btn { display: inline-block; padding: 12px 24px; background: #6c5ce7; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-top: 24px; }
+    .start-btn:hover { background: #5a4bd1; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="{{ url_for('academy_index') }}">← Academy</a>
+    <a href="{{ url_for('client_dashboard') }}">🏠 Dashboard</a>
+  </div>
+  <div class="container">
+    <div class="sidebar">
+      <h2>{{ course.title }}</h2>
+      <div class="progress-text">{{ completed }}/{{ total }} aulas concluídas</div>
+      <div class="bar"><div class="fill" style="width:{% if total > 0 %}{{ (completed / total * 100)|int }}{% else %}0{% endif %}%"></div></div>
+      <ul class="lesson-list">
+        {% for lesson in lessons %}
+        <li>
+          <a href="{{ url_for('academy_lesson', course_key=course.key, lesson_key=lesson.key) }}"
+             class="{% if loop.first and completed == 0 %}active{% endif %}">
+            <span class="status">{{ '✅' if lesson.completed else '📖' }}</span>
+            {{ lesson.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="main">
+      <div class="course-icon">{{ course.icon }}</div>
+      <h1>{{ course.title }}</h1>
+      <p class="subtitle">{{ course.description }}</p>
+      {% if total > 0 %}
+      <a href="{{ url_for('academy_lesson', course_key=course.key, lesson_key=lessons[0].key) }}" class="start-btn">
+        {% if completed > 0 %}▶ Continuar{% else %}▶ Começar curso{% endif %}
+      </a>
+      {% else %}
+      <p>Este curso ainda está sendo preparado. Em breve!</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

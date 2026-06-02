@@ -1,0 +1,43 @@
+{
+  "site_name": "Aeria Apps",
+  "meta_title": "Aeria Apps | Sistemas para reduzir fricção operacional",
+  "meta_description": "Aeria Apps constrói selfwares para PMEs operacionais: sistemas que assumem tarefas repetitivas, acompanham processos, executam follow-ups e reduzem trabalho manual.",
+  "canonical_url": "https://aeria-apps.com.br",
+  "og_image": "https://aeria-apps.com.br/static/img/og-default.png",
+  "launch_date": "2026-05-01",
+  "hero_kicker": "Sistemas para reduzir fricção operacional",
+  "hero_title": "Menos tarefas manuais. Mais operação fluindo.",
+  "hero_text": "Aeria Apps constrói selfwares: sistemas que assumem tarefas repetitivas, acompanham processos, executam follow-ups e mantêm fluxos operacionais em movimento com menos dependência humana.",
+  "primary_cta_label": "Ver cenários reais",
+  "primary_cta_url": "#real-scenarios",
+  "secondary_cta_label": "Mapear minha operação",
+  "secondary_cta_url": "#contact",
+  "whatsapp_number": "+55 12 3197-3198",
+  "whatsapp_url": "https://wa.me/551231973198?text=Olá!%20Quero%20mapear%20tarefas%20manuais%20da%20minha%20operação.",
+  "email": "admin@aeria-cs.com.br",
+  "contact_title": "Quer reduzir tarefas manuais da sua operação?",
+  "contact_text": "Conversamos sobre gargalos, atrasos, retrabalho e rotinas repetitivas para identificar onde um selfware pode gerar impacto real.",
+  "footer_note": "Aeria Apps • selfwares para reduzir fricção operacional",
+  "testimonials": [
+    {
+      "name": "Dra. Carla Mendes",
+      "role": "Clínica Odontológica",
+      "text": "O selfware de agendamento reduziu nossas faltas em mais de 80%. O sistema faz follow-up automático com as pacientes e reagenda no mesmo dia. Minha recepcionista agora trabalha só no que realmente importa."
+    },
+    {
+      "name": "Rafael Oliveira",
+      "role": "Escritório de Advocacia",
+      "text": "Documentos que antes levavam dias para ser processados agora são classificados e organizados em minutos. O selfware extrai dados de contratos e já alimenta nosso sistema. Economizamos horas por semana."
+    },
+    {
+      "name": "Luciana Torres",
+      "role": "Consultoria Comercial",
+      "text": "Meus leads não ficam mais sem resposta. O sistema acompanha cada contato, envia follow-ups no momento certo e me avisa quando alguém está quente. Minha taxa de conversão subiu 40%."
+    },
+    {
+      "name": "Felipe Andrade",
+      "role": "Empresa de Facilities",
+      "text": "Tínhamos 3 pessoas dedicadas a acompanhar ordens de serviço. Hoje o selfware gerencia o fluxo inteiro: abertura, alocação, execução e fechamento. Erros manuais caíram drasticamente."
+    }
+  ]
+}

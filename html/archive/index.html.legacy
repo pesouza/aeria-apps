@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Aeria Apps — soluções digitais para sua presença online com landing pages modernas, rápidas e responsivas.">
+  <title>Aeria Apps | Landing Page</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#111827; --panel-2:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
+      --line:#243244; --accent:#3b82f6; --accent-2:#22c55e; --shadow:0 20px 60px rgba(0,0,0,.35)
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,Arial,sans-serif;background:
+      radial-gradient(circle at top, rgba(59,130,246,.20), transparent 32%),
+      radial-gradient(circle at right, rgba(34,197,94,.12), transparent 28%),
+      var(--bg);color:var(--text)}
+    a{text-decoration:none;color:inherit}
+    input,textarea,button{font:inherit}
+    .wrap{width:min(1120px, calc(100% - 40px));margin:0 auto}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(11,18,32,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(36,50,68,.7)}
+    .nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+    .mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;box-shadow:var(--shadow)}
+    .mark svg{width:22px;height:22px;fill:#fff}
+    .links{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;border-radius:14px;font-weight:700;border:1px solid transparent;transition:.2s ease}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),#2563eb);box-shadow:0 12px 30px rgba(59,130,246,.25)}
+    .btn.secondary{border-color:var(--line);background:rgba(17,24,39,.8)}
+    .btn.wa{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 12px 30px rgba(34,197,94,.24)}
+    .btn:hover{transform:translateY(-1px)}
+    .hero{padding:72px 0 32px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+    .kicker{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid rgba(59,130,246,.35);background:rgba(59,130,246,.12);border-radius:999px;color:#bfdbfe;font-size:13px;font-weight:700}
+    h1{margin:18px 0 16px;font-size:clamp(42px, 6vw, 70px);line-height:1.02;letter-spacing:-1.5px}
+    .lead{font-size:clamp(17px, 2.2vw, 21px);line-height:1.7;color:var(--muted);max-width:58ch}
+    .actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}
+    .card{background:linear-gradient(180deg, rgba(17,24,39,.96), rgba(15,23,42,.92));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+    .stat{padding:18px}
+    .stat b{display:block;font-size:28px;margin-bottom:6px}
+    .stat span{color:var(--muted);font-size:14px}
+    .showcase{padding:24px;border-radius:26px;background:linear-gradient(180deg, rgba(17,24,39,.98), rgba(15,23,42,.95));border:1px solid var(--line);box-shadow:var(--shadow)}
+    .screen{border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid rgba(148,163,184,.16);padding:24px}
+    .screen-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px;color:#cbd5e1;font-size:13px}
+    .dots{display:flex;gap:8px}.dots i{width:10px;height:10px;border-radius:50%}.dots i:nth-child(1){background:#ef4444}.dots i:nth-child(2){background:#f59e0b}.dots i:nth-child(3){background:#22c55e}
+    .mock-title{font-size:28px;font-weight:800;margin:0 0 10px}.mock-text{margin:0 0 18px;color:#cbd5e1;line-height:1.6}
+    .chips{display:flex;flex-wrap:wrap;gap:10px}.chip{padding:9px 12px;border-radius:999px;background:rgba(59,130,246,.11);border:1px solid rgba(59,130,246,.22);color:#dbeafe;font-size:13px}
+    section{padding:28px 0}
+    .sec-h{font-size:32px;margin:0 0 8px}.sec-p{color:var(--muted);margin:0 0 22px;line-height:1.7}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .feature{padding:22px}.feature h3{margin:14px 0 8px;font-size:20px}.feature p{margin:0;color:var(--muted);line-height:1.7}
+    .icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.22)}
+    .icon svg{width:24px;height:24px;fill:#93c5fd}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .step{padding:22px}
+    .step .num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;background:linear-gradient(135deg,var(--accent),#8b5cf6);font-weight:800;margin-bottom:14px}
+    .step h3{margin:0 0 8px}.step p{margin:0;color:var(--muted);line-height:1.7}
+    .cta{padding:28px;background:linear-gradient(135deg, rgba(59,130,246,.16), rgba(34,197,94,.12));border:1px solid rgba(148,163,184,.18);border-radius:26px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+    .cta p{margin:8px 0 0;color:#dbeafe;line-height:1.6}
+    .footer{padding:26px 0 40px;color:var(--muted);font-size:14px}
+    .faq{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.qa{padding:22px}.qa h3{margin:0 0 10px}.qa p{margin:0;color:var(--muted);line-height:1.7}
+    .quote{padding:22px}.quote p{margin:0 0 14px;color:#dbeafe;line-height:1.7}.quote b{display:block}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+    .contact-box{padding:22px}
+    .field{display:block;width:100%;margin-top:10px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(15,23,42,.92);color:var(--text)}
+    textarea.field{min-height:140px;resize:vertical}
+    .mini{display:grid;gap:12px}
+    .sticky-wa{position:fixed;right:18px;bottom:18px;z-index:30}
+    .sticky-wa .btn{border-radius:999px;padding:14px 18px}
+    @media (max-width: 900px){.grid,.cards,.steps,.faq,.stats,.contact-grid{grid-template-columns:1fr}.cta,.nav-in{flex-direction:column;align-items:flex-start}.links{display:none}.hero{padding-top:44px}.showcase{order:-1}.sticky-wa{right:12px;bottom:12px}}
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2 2 20h20L12 2zm0 5 5.2 11H6.8L12 7z"/></svg>
+        </div>
+        <span>Aeria Apps</span>
+      </div>
+      <nav class="links" aria-label="Navegação">
+        <a href="#servicos">Serviços</a>
+        <a href="#processo">Processo</a>
+        <a href="#depoimentos">Depoimentos</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <a class="btn secondary" href="#contato">Falar agora</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="grid">
+        <div>
+          <div class="kicker">Landing pages rápidas, modernas e focadas em conversão</div>
+          <h1>Seu próximo cliente começa aqui.</h1>
+          <p class="lead">Criamos páginas de alta performance para apresentar sua marca, destacar benefícios e transformar visitantes em contatos reais.</p>
+          <div class="actions">
+            <a class="btn primary" href="#contato">Quero minha landing page</a>
+            <a class="btn secondary" href="#servicos">Ver recursos</a>
+          </div>
+          <div class="stats">
+            <div class="card stat"><b>100%</b><span>Responsiva em celular, tablet e desktop</span></div>
+            <div class="card stat"><b>SEO</b><span>Estrutura pronta para indexação e performance</span></div>
+            <div class="card stat"><b>CTA</b><span>Layout pensado para gerar leads e vendas</span></div>
+          </div>
+        </div>
+
+        <aside class="showcase card" aria-label="Prévia da página">
+          <div class="screen">
+            <div class="screen-top">
+              <div class="dots"><i></i><i></i><i></i></div>
+              <span>aeria-apps.com.br</span>
+            </div>
+            <h2 class="mock-title">Página profissional para destacar sua oferta</h2>
+            <p class="mock-text">Uma estrutura clara, elegante e objetiva para apresentar produtos, serviços, portfólio ou captação de contatos.</p>
+            <div class="chips">
+              <span class="chip">Design premium</span>
+              <span class="chip">Carregamento rápido</span>
+              <span class="chip">Chamadas para ação</span>
+              <span class="chip">Seções estratégicas</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="servicos">
+      <h2 class="sec-h">Serviços</h2>
+      <p class="sec-p">Uma base completa para sua presença online, com foco em clareza, confiança e conversão.</p>
+      <div class="cards">
+        <article class="card feature">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H4V5zm0 12h10v2H4v-2z"/></svg></div>
+          <h3>Hero forte</h3>
+          <p>Título impactante, subtítulo persuasivo e botões de ação para guiar o visitante.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zm0 7L2 4v12l10 5 10-5V4l-10 5z"/></svg></div>
+          <h3>Benefícios claros</h3>
+          <p>Explicação objetiva dos principais ganhos do seu serviço ou produto.</p>
+        </article>
+        <article class="card feature">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 5v6l5 3-.8 1.4L11 14V7h2z"/></svg></div>
+          <h3>Entrega rápida</h3>
+          <p>Estrutura leve e otimizada para abrir rápido e manter boa experiência.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="processo">
+      <h2 class="sec-h">Como funciona</h2>
+      <p class="sec-p">Um fluxo simples para sair do zero e publicar uma página funcional.</p>
+      <div class="steps">
+        <article class="card step"><span class="num">1</span><h3>Briefing</h3><p>Defina objetivo, público e oferta principal.</p></article>
+        <article class="card step"><span class="num">2</span><h3>Estrutura</h3><p>Organize seções que conduzem à conversão.</p></article>
+        <article class="card step"><span class="num">3</span><h3>Design</h3><p>Visual moderno, responsivo e alinhado à marca.</p></article>
+        <article class="card step"><span class="num">4</span><h3>Publicação</h3><p>Site no ar no seu domínio com ajuste fino final.</p></article>
+      </div>
+    </section>
+
+    <section id="depoimentos">
+      <h2 class="sec-h">Depoimentos</h2>
+      <p class="sec-p">Prova social para aumentar confiança e conversão.</p>
+      <div class="cards">
+        <article class="card quote"><p>“A página ficou limpa, rápida e muito profissional. Isso ajudou a melhorar os contatos.”</p><b>— Cliente satisfeito</b></article>
+        <article class="card quote"><p>“Ótima estrutura para vender serviço. Os botões de ação fizeram diferença.”</p><b>— Empreendedor</b></article>
+        <article class="card quote"><p>“Fácil de editar e com aparência premium. Ficou exatamente como queríamos.”</p><b>— Marca parceira</b></article>
+      </div>
+    </section>
+
+    <section class="card" style="padding:26px;">
+      <div class="cta">
+        <div>
+          <h2 class="sec-h" style="margin:0;">Pronto para personalizar a sua marca?</h2>
+          <p>Eu posso adaptar textos, cores, imagens, formulário, WhatsApp e seções conforme seu negócio.</p>
+        </div>
+        <a class="btn primary" href="#contato">Quero editar agora</a>
+      </div>
+    </section>
+
+    <section id="contato">
+      <h2 class="sec-h">Contato</h2>
+      <p class="sec-p">Envie sua mensagem ou fale direto pelo WhatsApp.</p>
+      <div class="contact-grid">
+        <div class="card contact-box">
+          <h3>Fale com a Aeria Apps</h3>
+          <p class="sec-p" style="margin-bottom:14px">Atendimento rápido para orçamento, ajustes e personalização.</p>
+          <div class="mini">
+            <a class="btn wa" href="https://wa.me/551231973198?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Aeria%20Apps%20e%20gostaria%20de%20saber%20mais." target="_blank" rel="noopener">Chamar no WhatsApp</a>
+            <a class="btn secondary" href="mailto:admin@aeria-cs.com.br">Enviar e-mail</a>
+          </div>
+        </div>
+        <form class="card contact-box">
+          <label>Nome<input class="field" type="text" placeholder="Seu nome"></label>
+          <label>E-mail<input class="field" type="email" placeholder="voce@exemplo.com"></label>
+          <label>Mensagem<textarea class="field" placeholder="Conte o que você precisa"></textarea></label>
+          <button class="btn primary" type="submit">Enviar mensagem</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="faq">
+      <h2 class="sec-h">Perguntas frequentes</h2>
+      <p class="sec-p">Respostas rápidas sobre essa página.</p>
+      <div class="faq">
+        <article class="card qa">
+          <h3>Posso trocar tudo depois?</h3>
+          <p>Sim. O conteúdo está em um único arquivo HTML, fácil de editar.</p>
+        </article>
+        <article class="card qa">
+          <h3>Dá para adicionar formulário?</h3>
+          <p>Sim, e ele já está incluso nesta versão.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky-wa">
+    <a class="btn wa" href="https://wa.me/551231973198?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Aeria%20Apps%20e%20gostaria%20de%20saber%20mais." target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+
+  <footer class="wrap footer">
+    <p>© <span id="y"></span> Aeria Apps • aeria-apps.com.br</p>
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+    document.querySelector('form')?.addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Mensagem pronta para integração. Posso ligar este formulário ao e-mail ou WhatsApp.');
+    });
+  </script>
+</body>
+</html>

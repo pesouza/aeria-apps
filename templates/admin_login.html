@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block body %}
+<main class="wrap" style="padding:72px 0">
+  <div class="card panel" style="max-width:520px;margin:0 auto">
+    <h1 style="margin-top:0">Acesso ao painel</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+    {% endwith %}
+    <form method="post" class="form">
+      <input class="field" type="password" name="password" placeholder="Senha do painel" autofocus>
+      <button class="btn primary" type="submit">Entrar</button>
+    </form>
+  </div>
+</main>
+{% endblock %}

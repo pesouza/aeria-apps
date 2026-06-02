@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block body %}
+<header class="top"><div class="wrap nav"><div class="brand"><div class="logo">A</div><span>Painel</span></div><div class="menu"><a href="/">Ver site</a><a href="/admin/logout">Sair</a></div></div></header>
+<main class="wrap" style="padding:32px 0 60px">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+  {% endwith %}
+  <div class="card panel">
+    <form method="post" class="form">
+      <h1 style="margin-top:0">Editar conteúdo</h1>
+      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
+        <input class="field" name="site_name" value="{{ content.site_name }}" placeholder="Nome do site">
+        <input class="field" name="canonical_url" value="{{ content.canonical_url }}" placeholder="URL canônica">
+        <input class="field" name="meta_title" value="{{ content.meta_title }}" placeholder="Title SEO">
+        <input class="field" name="og_image" value="{{ content.og_image }}" placeholder="URL da imagem OG (opcional)">
+      </div>
+      <textarea name="meta_description" class="field" placeholder="Meta description">{{ content.meta_description }}</textarea>
+      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
+        <input class="field" name="hero_kicker" value="{{ content.hero_kicker }}" placeholder="Kicker">
+        <input class="field" name="contact_title" value="{{ content.contact_title }}" placeholder="Título contato">
+      </div>
+      <textarea name="hero_title" class="field" placeholder="Título principal">{{ content.hero_title }}</textarea>
+      <textarea name="hero_text" class="field" placeholder="Texto hero">{{ content.hero_text }}</textarea>
+      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
+        <input class="field" name="primary_cta_label" value="{{ content.primary_cta_label }}" placeholder="CTA primário">
+        <input class="field" name="primary_cta_url" value="{{ content.primary_cta_url }}" placeholder="URL CTA primário">
+        <input class="field" name="secondary_cta_label" value="{{ content.secondary_cta_label }}" placeholder="CTA secundário">
+        <input class="field" name="secondary_cta_url" value="{{ content.secondary_cta_url }}" placeholder="URL CTA secundário">
+        <input class="field" name="whatsapp_number" value="{{ content.whatsapp_number }}" placeholder="WhatsApp">
+        <input class="field" name="whatsapp_url" value="{{ content.whatsapp_url }}" placeholder="URL WhatsApp">
+        <input class="field" name="email" value="{{ content.email }}" placeholder="E-mail">
+        <input class="field" name="footer_note" value="{{ content.footer_note }}" placeholder="Rodapé">
+      </div>
+      <textarea name="contact_text" class="field" placeholder="Texto contato">{{ content.contact_text }}</textarea>
+      <label>Stats JSON</label><textarea name="stats_json">{{ stats_json }}</textarea>
+      <label>Serviços JSON</label><textarea name="services_json">{{ services_json }}</textarea>
+      <label>Portfólio JSON</label><textarea name="projects_json">{{ projects_json }}</textarea>
+      <label>Processo JSON</label><textarea name="process_json">{{ process_json }}</textarea>
+      <label>FAQ JSON</label><textarea name="faq_json">{{ faq_json }}</textarea>
+      <button class="btn primary" type="submit">Salvar alterações</button>
+    </form>
+  </div>
+</main>
+{% endblock %}

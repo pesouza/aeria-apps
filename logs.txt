@@ -1,0 +1,53 @@
+app-1  | warning: Ignoring existing virtual environment linked to non-existent Python interpreter: .venv/bin/python3 -> python
+app-1  | Using CPython 3.11.15 interpreter at: /usr/local/bin/python3
+app-1  | Removed virtual environment at: .venv
+app-1  | Creating virtual environment at: .venv
+app-1  | Downloading ruff (11.0MiB)
+app-1  |  Downloaded ruff
+app-1  | Installed 10 packages in 307ms
+app-1  | [2026-05-20 20:05:23 +0000] [13] [INFO] Starting gunicorn 23.0.0
+app-1  | [2026-05-20 20:05:23 +0000] [13] [INFO] Listening at: http://0.0.0.0:8000 (13)
+app-1  | [2026-05-20 20:05:23 +0000] [13] [INFO] Using worker: gthread
+app-1  | [2026-05-20 20:05:23 +0000] [14] [INFO] Booting worker with pid: 14
+app-1  | [2026-05-20 20:05:23 +0000] [15] [INFO] Booting worker with pid: 15
+app-1  | [2026-05-20 20:06:47,532] ERROR in app: Exception on / [GET]
+app-1  | Traceback (most recent call last):
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/flask/app.py", line 1511, in wsgi_app
+app-1  |     response = self.full_dispatch_request()
+app-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/flask/app.py", line 919, in full_dispatch_request
+app-1  |     rv = self.handle_user_exception(e)
+app-1  |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+app-1  |     rv = self.dispatch_request()
+app-1  |          ^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+app-1  |     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/app.py", line 85, in index
+app-1  |     return render_template("index.html", content=load_content())
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/flask/templating.py", line 149, in render_template
+app-1  |     template = app.jinja_env.get_or_select_template(template_name_or_list)
+app-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 1087, in get_or_select_template
+app-1  |     return self.get_template(template_name_or_list, parent, globals)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 1016, in get_template
+app-1  |     return self._load_template(name, globals)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 975, in _load_template
+app-1  |     template = self.loader.load(self, name, self.make_globals(globals))
+app-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/loaders.py", line 138, in load
+app-1  |     code = environment.compile(source, name, filename)
+app-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 771, in compile
+app-1  |     self.handle_exception(source=source_hint)
+app-1  |   File "/app/.venv/lib/python3.11/site-packages/jinja2/environment.py", line 942, in handle_exception
+app-1  |     raise rewrite_traceback_stack(source=source)
+app-1  |   File "/app/templates/index.html", line 79, in template
+app-1  |     {% endblock %}
+app-1  | jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+app-1  | 172.16.5.1 - - [20/May/2026:20:06:47 +0000] "GET / HTTP/1.1" 500 265 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 OPR/131.0.0.0"
+app-1  | 172.16.5.1 - - [20/May/2026:20:06:48 +0000] "GET /favicon.ico HTTP/1.1" 404 207 "https://aeria-apps.com.br/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 OPR/131.0.0.0"

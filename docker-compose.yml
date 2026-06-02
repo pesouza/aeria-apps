@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SITE_URL: ${SITE_URL:-https://aeria-apps.com.br}
+      CONTENT_FILE: /data/content.json
+    volumes:
+      - ./data:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`)
+      - traefik.http.routers.aeria.entrypoints=websecure
+      - traefik.http.routers.aeria.tls.certresolver=letsencrypt
+      - traefik.http.services.aeria.loadbalancer.server.port=8000
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

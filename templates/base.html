@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{ content.meta_title or "Aeria Apps — Selfwares" }}</title>
+
+  {% if content.meta_description %}
+  <meta name="description" content="{{ content.meta_description }}">
+  {% endif %}
+
+  {% if content.canonical_url %}
+  <link rel="canonical" href="{{ content.canonical_url }}">
+  {% endif %}
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ content.site_name or 'Aeria Apps' }}">
+  <meta property="og:title" content="{{ content.meta_title or 'Aeria Apps — Selfwares' }}">
+  {% if content.meta_description %}
+  <meta property="og:description" content="{{ content.meta_description }}">
+  {% endif %}
+  {% if content.canonical_url %}
+  <meta property="og:url" content="{{ content.canonical_url }}">
+  {% endif %}
+  {% if content.og_image %}
+  <meta property="og:image" content="{{ content.og_image }}">
+  {% else %}
+  <meta property="og:image" content="{{ content.canonical_url or 'https://aeria-apps.com.br' }}/static/img/aeriaApps-logo.png">
+  {% endif %}
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ content.meta_title or 'Aeria Apps — Selfwares' }}">
+  {% if content.meta_description %}
+  <meta name="twitter:description" content="{{ content.meta_description }}">
+  {% endif %}
+  {% if content.og_image %}
+  <meta name="twitter:image" content="{{ content.og_image }}">
+  {% else %}
+  <meta name="twitter:image" content="{{ content.canonical_url or 'https://aeria-apps.com.br' }}/static/img/aeriaApps-logo.png">
+  {% endif %}
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/aeriaApps.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/aeriaApps.png') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "{{ content.site_name or 'Aeria Apps' }}",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "{{ content.meta_description or 'Sistemas autônomos para reduzir fricção operacional em PMEs.' }}",
+    "url": "{{ content.canonical_url or 'https://aeria-apps.com.br' }}",
+    "author": {
+      "@type": "Organization",
+      "name": "Aeria Creative Solutions"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL",
+      "description": "Diagnóstico operacional gratuito"
+    }
+  }
+  </script>
+</head>
+<body>
+  {% block body %}{% endblock %}
+</body>
+</html>

@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% block body %}
-<main class="wrap" style="padding:72px 0">
-  <div class="card panel" style="max-width:520px;margin:0 auto">
-    <h1 style="margin-top:0">Acesso ao painel</h1>
+<main style="display:grid;place-items:center;min-height:80vh;padding:40px 20px">
+  <div class="contact-form-card" style="max-width:460px;width:100%">
+    <h1 style="margin:0 0 6px;font-size:28px">Acesso ao painel</h1>
+    <p style="color:var(--muted);font-size:16px;margin:0 0 24px">Entre com a senha administrativa para editar o conteúdo do site.</p>
+    {% if error %}
+    <div class="form-feedback error" style="display:block">{{ error }}</div>
+    {% endif %}
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+      {% for category, message in messages %}
+      <div class="form-feedback {{ category }}" style="display:block">{{ message }}</div>
+      {% endfor %}
     {% endwith %}
-    <form method="post" class="form">
-      <input class="field" type="password" name="password" placeholder="Senha do painel" autofocus>
-      <button class="btn primary" type="submit">Entrar</button>
+    <form method="post" style="display:grid;gap:16px">
+      <div class="form-group" style="margin:0">
+        <label for="password">Senha</label>
+        <input class="form-field" id="password" type="password" name="password" placeholder="Senha do painel" autofocus required>
+      </div>
+      <button class="btn primary form-submit" type="submit">Entrar</button>
     </form>
   </div>
 </main>

@@ -1,43 +1,145 @@
 {% extends 'base.html' %}
 {% block body %}
-<header class="top"><div class="wrap nav"><div class="brand"><div class="logo">A</div><span>Painel</span></div><div class="menu"><a href="/">Ver site</a><a href="/admin/logout">Sair</a></div></div></header>
-<main class="wrap" style="padding:32px 0 60px">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
-  {% endwith %}
-  <div class="card panel">
-    <form method="post" class="form">
-      <h1 style="margin-top:0">Editar conteúdo</h1>
-      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
-        <input class="field" name="site_name" value="{{ content.site_name }}" placeholder="Nome do site">
-        <input class="field" name="canonical_url" value="{{ content.canonical_url }}" placeholder="URL canônica">
-        <input class="field" name="meta_title" value="{{ content.meta_title }}" placeholder="Title SEO">
-        <input class="field" name="og_image" value="{{ content.og_image }}" placeholder="URL da imagem OG (opcional)">
+<header class="header">
+  <div class="container nav">
+    <div class="brand">
+      <div class="logo">A</div>
+      <span>Painel Aeria Apps</span>
+    </div>
+    <nav>
+      <a href="/" target="_blank">Ver site</a>
+      <a href="/admin/logout">Sair</a>
+    </nav>
+  </div>
+</header>
+
+<main style="padding:40px 0 80px">
+  <div class="container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="form-feedback {{ category }}" style="display:block;margin-bottom:24px">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post" style="display:grid;gap:20px">
+      <div class="section-header" style="margin-bottom:0">
+        <span>CONTEÚDO DO SITE</span>
+        <h2 style="font-size:clamp(28px,3vw,38px)">Editar conteúdo principal</h2>
       </div>
-      <textarea name="meta_description" class="field" placeholder="Meta description">{{ content.meta_description }}</textarea>
-      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
-        <input class="field" name="hero_kicker" value="{{ content.hero_kicker }}" placeholder="Kicker">
-        <input class="field" name="contact_title" value="{{ content.contact_title }}" placeholder="Título contato">
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        <div class="form-group" style="margin:0">
+          <label for="site_name">Nome do site</label>
+          <input class="form-field" id="site_name" name="site_name" value="{{ content.site_name }}" placeholder="Aeria Apps">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="canonical_url">URL canônica</label>
+          <input class="form-field" id="canonical_url" name="canonical_url" value="{{ content.canonical_url }}" placeholder="https://aeria-apps.com.br">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="meta_title">Title (SEO)</label>
+          <input class="form-field" id="meta_title" name="meta_title" value="{{ content.meta_title }}" placeholder="Aeria Apps | Selfwares">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="og_image">URL da imagem OG</label>
+          <input class="form-field" id="og_image" name="og_image" value="{{ content.og_image }}" placeholder="https://.../og-default.png">
+        </div>
       </div>
-      <textarea name="hero_title" class="field" placeholder="Título principal">{{ content.hero_title }}</textarea>
-      <textarea name="hero_text" class="field" placeholder="Texto hero">{{ content.hero_text }}</textarea>
-      <div class="cards" style="grid-template-columns:repeat(2,1fr)">
-        <input class="field" name="primary_cta_label" value="{{ content.primary_cta_label }}" placeholder="CTA primário">
-        <input class="field" name="primary_cta_url" value="{{ content.primary_cta_url }}" placeholder="URL CTA primário">
-        <input class="field" name="secondary_cta_label" value="{{ content.secondary_cta_label }}" placeholder="CTA secundário">
-        <input class="field" name="secondary_cta_url" value="{{ content.secondary_cta_url }}" placeholder="URL CTA secundário">
-        <input class="field" name="whatsapp_number" value="{{ content.whatsapp_number }}" placeholder="WhatsApp">
-        <input class="field" name="whatsapp_url" value="{{ content.whatsapp_url }}" placeholder="URL WhatsApp">
-        <input class="field" name="email" value="{{ content.email }}" placeholder="E-mail">
-        <input class="field" name="footer_note" value="{{ content.footer_note }}" placeholder="Rodapé">
+
+      <div class="form-group" style="margin:0">
+        <label for="meta_description">Meta description</label>
+        <textarea class="form-field" id="meta_description" name="meta_description" placeholder="Descrição para SEO" rows="3">{{ content.meta_description }}</textarea>
       </div>
-      <textarea name="contact_text" class="field" placeholder="Texto contato">{{ content.contact_text }}</textarea>
-      <label>Stats JSON</label><textarea name="stats_json">{{ stats_json }}</textarea>
-      <label>Serviços JSON</label><textarea name="services_json">{{ services_json }}</textarea>
-      <label>Portfólio JSON</label><textarea name="projects_json">{{ projects_json }}</textarea>
-      <label>Processo JSON</label><textarea name="process_json">{{ process_json }}</textarea>
-      <label>FAQ JSON</label><textarea name="faq_json">{{ faq_json }}</textarea>
-      <button class="btn primary" type="submit">Salvar alterações</button>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        <div class="form-group" style="margin:0">
+          <label for="hero_kicker">Kicker do hero</label>
+          <input class="form-field" id="hero_kicker" name="hero_kicker" value="{{ content.hero_kicker }}" placeholder="SISTEMAS AUTÔNOMOS">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="launch_date">Data de lançamento</label>
+          <input class="form-field" id="launch_date" name="launch_date" value="{{ content.launch_date }}" placeholder="2026-05-01">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label for="hero_title">Título principal (h1)</label>
+        <textarea class="form-field" id="hero_title" name="hero_title" placeholder="Menos tarefas manuais. Mais operação fluindo." rows="2">{{ content.hero_title }}</textarea>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label for="hero_text">Texto do hero</label>
+        <textarea class="form-field" id="hero_text" name="hero_text" placeholder="Descrição principal do site" rows="3">{{ content.hero_text }}</textarea>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <div class="form-group" style="margin:0">
+          <label for="primary_cta_label">CTA primário</label>
+          <input class="form-field" id="primary_cta_label" name="primary_cta_label" value="{{ content.primary_cta_label }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="primary_cta_url">URL do CTA primário</label>
+          <input class="form-field" id="primary_cta_url" name="primary_cta_url" value="{{ content.primary_cta_url }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="secondary_cta_label">CTA secundário</label>
+          <input class="form-field" id="secondary_cta_label" name="secondary_cta_label" value="{{ content.secondary_cta_label }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="secondary_cta_url">URL do CTA secundário</label>
+          <input class="form-field" id="secondary_cta_url" name="secondary_cta_url" value="{{ content.secondary_cta_url }}">
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        <div class="form-group" style="margin:0">
+          <label for="whatsapp_number">Número do WhatsApp</label>
+          <input class="form-field" id="whatsapp_number" name="whatsapp_number" value="{{ content.whatsapp_number }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="whatsapp_url">URL do WhatsApp</label>
+          <input class="form-field" id="whatsapp_url" name="whatsapp_url" value="{{ content.whatsapp_url }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="email">E-mail de contato</label>
+          <input class="form-field" id="email" name="email" value="{{ content.email }}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label for="footer_note">Texto do rodapé</label>
+          <input class="form-field" id="footer_note" name="footer_note" value="{{ content.footer_note }}">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label for="contact_title">Título da seção de contato</label>
+        <textarea class="form-field" id="contact_title" name="contact_title" rows="2">{{ content.contact_title }}</textarea>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label for="contact_text">Texto da seção de contato</label>
+        <textarea class="form-field" id="contact_text" name="contact_text" rows="3">{{ content.contact_text }}</textarea>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:8px 0">
+
+      <div class="section-header" style="margin-bottom:0">
+        <span>DEPOIMENTOS</span>
+        <h2 style="font-size:clamp(28px,3vw,38px)">Editar depoimentos (JSON)</h2>
+      </div>
+
+      <div class="form-group" style="margin:0">
+        <label for="testimonials_json">Lista de depoimentos em JSON</label>
+        <textarea class="form-field" id="testimonials_json" name="testimonials_json" rows="10" style="font-family:monospace;font-size:14px">{% if content.testimonials %}{{ content.testimonials | tojson(indent=2) }}{% endif %}</textarea>
+      </div>
+
+      <button class="btn primary large" type="submit" style="width:100%;justify-self:start;max-width:400px">Salvar alterações</button>
     </form>
   </div>
 </main>

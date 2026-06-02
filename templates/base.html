@@ -53,6 +53,11 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+  {% if config.get("ADSENSE_CLIENT_ID") %}
+  <meta name="google-adsense-account" content="{{ config.ADSENSE_CLIENT_ID }}">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ config.ADSENSE_CLIENT_ID }}" crossorigin="anonymous"></script>
+  {% endif %}
+
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {

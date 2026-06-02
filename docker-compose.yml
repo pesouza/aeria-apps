@@ -6,6 +6,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       SITE_URL: ${SITE_URL:-https://aeria-apps.com.br}
+      ADSENSE_CLIENT_ID: ${ADSENSE_CLIENT_ID:-}
       CONTENT_FILE: /data/content.json
     volumes:
       - ./data:/app/data

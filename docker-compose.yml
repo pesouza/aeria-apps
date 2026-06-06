@@ -9,8 +9,20 @@ services:
       ADSENSE_CLIENT_ID: ${ADSENSE_CLIENT_ID:-}
       CONTENT_FILE: /data/content.json
     volumes:
+      - .:/app
       - ./data:/app/data
       - /opt/data/profiles/paulo-bot/indica-aqui:/data/indica-aqui
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
     labels:
       - traefik.enable=true
       - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`)

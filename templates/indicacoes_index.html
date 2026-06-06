@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indica Aqui — Sua Central de Indicações de Confiança</title>
+    <meta name="description" content="Encontre os melhores prestadores de serviços recomendados pela sua vizinhança. Avaliações reais de quem já contratou.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/indica-aqui.css">
+</head>
+<body>
+    <nav class="ia-nav">
+        <div class="ia-container">
+            <a href="/indicacoes/" class="ia-logo">
+                <span class="ia-logo-icon">⭐</span>
+                <span class="ia-logo-text">Indica <span class="ia-logo-highlight">Aqui</span></span>
+            </a>
+            <div class="ia-nav-links">
+                <span class="ia-nav-tagline">Indicações de confiança da sua vizinhança</span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="ia-hero">
+        <div class="ia-container">
+            <div class="ia-hero-content">
+                <span class="ia-badge">👍 Recomendado por vizinhos reais</span>
+                <h1 class="ia-hero-title">Quem indica sabe.<br>Quem contratou <span class="text-gradient">aprovou</span>.</h1>
+                <p class="ia-hero-text">
+                    Encontre profissionais recomendados por pessoas da sua região.
+                    Cada indicação aqui vem de uma experiência real em grupos de bairro.
+                </p>
+            </div>
+            <div class="ia-hero-stats">
+                <div class="ia-stat-card">
+                    <span class="ia-stat-number">{{ stats.total_servicos }}</span>
+                    <span class="ia-stat-label">Categorias</span>
+                </div>
+                <div class="ia-stat-card">
+                    <span class="ia-stat-number">{{ stats.total_prestadores }}</span>
+                    <span class="ia-stat-label">Profissionais</span>
+                </div>
+                <div class="ia-stat-card">
+                    <span class="ia-stat-number">{{ stats.total_avaliacoes }}</span>
+                    <span class="ia-stat-label">Avaliações Reais</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ia-section">
+        <div class="ia-container">
+            <div class="ia-section-header">
+                <h2 class="ia-section-title">O que você precisa?</h2>
+                <p class="ia-section-subtitle">Escolha uma categoria e veja quem a vizinhança recomenda</p>
+            </div>
+
+            <div class="ia-servicos-grid">
+                {% for servico in servicos %}
+                <a href="/indicacoes/{{ servico.slug }}" class="ia-servico-card">
+                    <div class="ia-servico-icon">{{ servico.icone or '🔧' }}</div>
+                    <div class="ia-servico-info">
+                        <h3 class="ia-servico-nome">{{ servico.nome }}</h3>
+                        <div class="ia-servico-meta">
+                            <span class="ia-meta-item">
+                                <span class="ia-meta-num">{{ servico.total_prestadores }}</span> profissionais
+                            </span>
+                            <span class="ia-meta-divider">•</span>
+                            <span class="ia-meta-item">
+                                <span class="ia-meta-num">{{ servico.total_indicacoes }}</span> indicações
+                            </span>
+                        </div>
+                    </div>
+                    <span class="ia-seta">→</span>
+                </a>
+                {% else %}
+                <div class="ia-empty">
+                    <p>Nenhuma categoria cadastrada ainda.</p>
+                    <p class="ia-empty-sub">As indicações estão sendo coletadas dos grupos. Volte em breve!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="ia-section ia-section-alt">
+        <div class="ia-container">
+            <div class="ia-como-funciona">
+                <h2 class="ia-section-title">Como funciona</h2>
+                <div class="ia-steps">
+                    <div class="ia-step">
+                        <div class="ia-step-num">1</div>
+                        <h4>Alguém pede uma indicação</h4>
+                        <p>Nos grupos de bairro, vizinhos perguntam por serviços</p>
+                    </div>
+                    <div class="ia-step-arrow">→</div>
+                    <div class="ia-step">
+                        <div class="ia-step-num">2</div>
+                        <h4>A gente coleta</h4>
+                        <p>Extraímos as recomendações e avaliações reais</p>
+                    </div>
+                    <div class="ia-step-arrow">→</div>
+                    <div class="ia-step">
+                        <div class="ia-step-num">3</div>
+                        <h4>Você encontra aqui</h4>
+                        <p>Os melhores avaliados, organizados por categoria</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="ia-footer">
+        <div class="ia-container">
+            <p>⭐ <strong>Indica Aqui</strong> — Curadoria de indicações dos grupos de bairro</p>
+            <p class="ia-footer-sub">Alimentado por <a href="https://aeria-apps.com.br" target="_blank">Aer.IA Creative Solutions</a></p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ servico.icone }} {{ servico.nome }} — Indica Aqui</title>
+    <meta name="description" content="Melhores {{ servico.nome|lower }} recomendados pela vizinhança. Veja avaliações reais e contatos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/indica-aqui.css">
+</head>
+<body>
+    <nav class="ia-nav">
+        <div class="ia-container">
+            <a href="/indicacoes/" class="ia-logo">
+                <span class="ia-logo-icon">⭐</span>
+                <span class="ia-logo-text">Indica <span class="ia-logo-highlight">Aqui</span></span>
+            </a>
+            <a href="/indicacoes/" class="ia-nav-back">← Voltar</a>
+        </div>
+    </nav>
+
+    <section class="ia-hero ia-hero-sm">
+        <div class="ia-container">
+            <div class="ia-hero-content">
+                <span class="ia-hero-emoji">{{ servico.icone or '🔧' }}</span>
+                <h1 class="ia-hero-title">{{ servico.nome }}</h1>
+                <p class="ia-hero-text">{{ servico.descricao or 'Profissionais recomendados pela vizinhança' }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="ia-section">
+        <div class="ia-container">
+            <div class="ia-section-header">
+                <h2 class="ia-section-title">
+                    {% if prestadores %}
+                    Melhores avaliados
+                    <span class="ia-count-badge">{{ prestadores|length }} profissionais</span>
+                    {% endif %}
+                </h2>
+            </div>
+
+            <div class="ia-prestadores-list">
+                {% for p in prestadores %}
+                <div class="ia-prestador-card">
+                    <div class="ia-prestador-rank">#{{ loop.index }}</div>
+                    <div class="ia-prestador-body">
+                        <div class="ia-prestador-header">
+                            <h3 class="ia-prestador-nome">{{ p.nome }}</h3>
+                            <div class="ia-prestador-score">
+                                <div class="ia-stars">
+                                    {% set full = p.score|int %}
+                                    {% set half = 1 if (p.score - full) >= 0.3 else 0 %}
+                                    {% for i in range(full) %}★{% endfor %}
+                                    {% if half %}⯨{% endif %}
+                                    {% for i in range(5 - full - half) %}☆{% endfor %}
+                                </div>
+                                <span class="ia-score-num">{{ "%.1f"|format(p.score) }}</span>
+                            </div>
+                        </div>
+                        <div class="ia-prestador-stats">
+                            <span class="ia-stat-chip ia-chip-pos">👍 {{ p.total_positivas }} recomendações</span>
+                            {% if p.total_negativas > 0 %}
+                            <span class="ia-stat-chip ia-chip-neg">👎 {{ p.total_negativas }}</span>
+                            {% endif %}
+                            <span class="ia-stat-chip ia-chip-info">📋 {{ p.total_indicacoes }} indicações</span>
+                        </div>
+                        {% if p.telefone %}
+                        <div class="ia-prestador-contato">
+                            <a href="https://wa.me/{{ p.whatsapp or p.telefone }}" class="ia-btn ia-btn-whatsapp" target="_blank">
+                                💬 Falar no WhatsApp
+                            </a>
+                            <a href="/indicacoes/prestador/{{ p.id }}" class="ia-btn ia-btn-outline">
+                                Ver avaliações →
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="ia-empty">
+                    <p>🔍 Nenhum profissional cadastrado ainda para {{ servico.nome }}.</p>
+                    <p class="ia-empty-sub">As indicações estão sendo coletadas dos grupos de bairro. Volte em breve!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="ia-prompt-box">
+                <p>💡 <strong>Precisando de um {{ servico.nome|lower }}?</strong></p>
+                <p>Pergunte nos grupos de bairro ou entre em contato com um dos profissionais acima.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="ia-footer">
+        <div class="ia-container">
+            <a href="/indicacoes/" class="ia-footer-link">← Voltar para todas as categorias</a>
+            <p class="ia-footer-sub">⭐ <strong>Indica Aqui</strong> — Curadoria de indicações dos grupos de bairro</p>
+        </div>
+    </footer>
+</body>
+</html>

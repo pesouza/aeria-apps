@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ prestador.nome }} — {{ prestador.servico_nome }} — Indica Aqui</title>
+    <meta name="description" content="Veja avaliações reais de {{ prestador.nome }}. {{ prestador.total_positivas }} recomendações da vizinhança.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/indica-aqui.css">
+</head>
+<body>
+    <nav class="ia-nav">
+        <div class="ia-container">
+            <a href="/indicacoes/" class="ia-logo">
+                <span class="ia-logo-icon">⭐</span>
+                <span class="ia-logo-text">Indica <span class="ia-logo-highlight">Aqui</span></span>
+            </a>
+            <a href="/indicacoes/{{ prestador.servico_slug }}" class="ia-nav-back">← Voltar para {{ prestador.servico_nome }}</a>
+        </div>
+    </nav>
+
+    <section class="ia-section ia-section-top">
+        <div class="ia-container">
+            <div class="ia-perfil-header">
+                <div class="ia-perfil-main">
+                    <div class="ia-perfil-icon">{{ prestador.icone or '👤' }}</div>
+                    <div>
+                        <h1 class="ia-perfil-nome">{{ prestador.nome }}</h1>
+                        <div class="ia-perfil-tags">
+                            <span class="ia-tag">{{ prestador.servico_nome }}</span>
+                            <span class="ia-tag ia-tag-score">{{ "%.1f"|format(prestador.score) }} ⭐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ia-perfil-stats">
+                    <div class="ia-perfil-stat">
+                        <span class="ia-perfil-stat-num">{{ prestador.total_positivas }}</span>
+                        <span class="ia-perfil-stat-label">👍 Recomendações</span>
+                    </div>
+                    <div class="ia-perfil-stat">
+                        <span class="ia-perfil-stat-num">{{ prestador.total_indicacoes }}</span>
+                        <span class="ia-perfil-stat-label">📋 Indicações</span>
+                    </div>
+                    {% if prestador.total_negativas > 0 %}
+                    <div class="ia-perfil-stat ia-perfil-stat-neg">
+                        <span class="ia-perfil-stat-num">{{ prestador.total_negativas }}</span>
+                        <span class="ia-perfil-stat-label">👎 Negativas</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if prestador.telefone %}
+            <div class="ia-perfil-cta">
+                <a href="https://wa.me/{{ prestador.whatsapp or prestador.telefone }}" class="ia-btn ia-btn-whatsapp ia-btn-lg" target="_blank">
+                    💬 Falar no WhatsApp
+                </a>
+                {% if prestador.fonte_grupo %}
+                <p class="ia-perfil-fonte">Indicado no grupo <strong>{{ prestador.fonte_grupo }}</strong></p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="ia-section ia-section-alt">
+        <div class="ia-container">
+            <div class="ia-section-header">
+                <h2 class="ia-section-title">
+                    Avaliações
+                    <span class="ia-count-badge">{{ avaliacoes|length }}</span>
+                </h2>
+            </div>
+
+            <div class="ia-avaliacoes-list">
+                {% for a in avaliacoes %}
+                <div class="ia-avaliacao-card {% if a.tipo == 'positiva' %}ia-avaliacao-pos{% else %}ia-avaliacao-neg{% endif %}">
+                    <div class="ia-avaliacao-header">
+                        <span class="ia-avaliacao-tipo">
+                            {% if a.tipo == 'positiva' %}👍 Recomendação{% else %}👎 Pontos de atenção{% endif %}
+                        </span>
+                        <span class="ia-avaliacao-data">{{ a.created_at[:10] }}</span>
+                    </div>
+                    <p class="ia-avaliacao-texto">"{{ a.texto }}"</p>
+                    <div class="ia-avaliacao-meta">
+                        <span class="ia-avaliacao-autor">— {{ a.autor_grupo or 'Vizinho(a)' }}</span>
+                        {% if a.grupo_nome %}
+                        <span class="ia-avaliacao-grupo">via {{ a.grupo_nome }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="ia-empty">
+                    <p>Nenhuma avaliação registrada ainda.</p>
+                    <p class="ia-empty-sub">As avaliações aparecem conforme os vizinhos recomendam nos grupos.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <footer class="ia-footer">
+        <div class="ia-container">
+            <a href="/indicacoes/{{ prestador.servico_slug }}" class="ia-footer-link">← Voltar para {{ prestador.servico_nome }}</a>
+            <p class="ia-footer-sub">⭐ <strong>Indica Aqui</strong> — Curadoria de indicações dos grupos de bairro</p>
+        </div>
+    </footer>
+</body>
+</html>

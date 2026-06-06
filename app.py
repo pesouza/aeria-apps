@@ -149,11 +149,11 @@ def sitemap():
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template("404.html"), 404
+    return render_template("404.html", content=load_content()), 404
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template("500.html"), 500
+    return render_template("500.html", content=load_content()), 500
 
 @app.get("/health")
 def health():
@@ -289,5 +289,100 @@ def admin():
         return redirect(url_for("admin"))
     return render_template("admin.html", content=content)
 
+# ═══════════════════════════════════════════════════════════════════════════
+# INDICA AQUI — Landing Pages de Indicações de Bairro
+# ═══════════════════════════════════════════════════════════════════════════
+
+INDICA_AQUI_DB = "/data/indica-aqui/indica_aqui.db"
+# Fallback para desenvolvimento local
+if not os.path.exists(os.path.dirname(INDICA_AQUI_DB)):
+    INDICA_AQUI_DB = "/opt/data/profiles/paulo-bot/indica-aqui/indica_aqui.db"
+WHATSAPP_NUMBER = "551231973198"
+
+import logging
+logger.warning("=== INDICA AQUI CARREGADO ===")
+print("=== INDICA AQUI MODULE CARREGADO ===", flush=True)
+
+def get_db():
+    import sqlite3
+    conn = sqlite3.connect(INDICA_AQUI_DB)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+@app.route("/indicacoes/")
+def indicacoes_index():
+    """Página inicial — lista todos os serviços disponíveis."""
+    conn = get_db()
+    servicos = conn.execute("""
+        SELECT s.*,
+               COUNT(p.id) as total_prestadores,
+               COALESCE(SUM(p.total_indicacoes), 0) as total_indicacoes
+        FROM servicos s
+        LEFT JOIN prestadores p ON p.servico_id = s.id
+        WHERE s.ativo = 1
+        GROUP BY s.id
+        ORDER BY total_indicacoes DESC
+    """).fetchall()
+
+    stats = {
+        "total_prestadores": conn.execute("SELECT COUNT(*) FROM prestadores").fetchone()[0],
+        "total_avaliacoes": conn.execute("SELECT COUNT(*) FROM avaliacoes").fetchone()[0],
+        "total_servicos": len(servicos),
+    }
+    conn.close()
+    return render_template("indicacoes_index.html", servicos=servicos, stats=stats)
+
+
+@app.route("/indicacoes/<slug>")
+def indicacoes_servico(slug):
+    """Página de um serviço — lista os melhores prestadores."""
+    conn = get_db()
+    servico = conn.execute("SELECT * FROM servicos WHERE slug=? AND ativo=1", (slug,)).fetchone()
+    if not servico:
+        conn.close()
+        return render_template("404.html", content=load_content()), 404
+
+    prestadores = conn.execute("""
+        SELECT p.*, s.nome as servico_nome, s.icone
+        FROM prestadores p
+        JOIN servicos s ON p.servico_id = s.id
+        WHERE s.slug = ? AND p.total_positivas > 0
+        ORDER BY p.score DESC, p.total_indicacoes DESC
+        LIMIT 50
+    """, (slug,)).fetchall()
+
+    conn.close()
+    return render_template("indicacoes_servico.html", servico=servico, prestadores=prestadores)
+
+
+@app.route("/indicacoes/prestador/<int:prestador_id>")
+def indicacoes_prestador(prestador_id):
+    """Página de um prestador — mostra avaliações e contato."""
+    conn = get_db()
+    prestador = conn.execute("""
+        SELECT p.*, s.nome as servico_nome, s.slug as servico_slug, s.icone
+        FROM prestadores p
+        JOIN servicos s ON p.servico_id = s.id
+        WHERE p.id = ?
+    """, (prestador_id,)).fetchone()
+
+    if not prestador:
+        conn.close()
+        return render_template("404.html", content=load_content()), 404
+
+    avaliacoes = conn.execute("""
+        SELECT * FROM avaliacoes
+        WHERE prestador_id = ?
+        ORDER BY created_at DESC
+        LIMIT 100
+    """, (prestador_id,)).fetchall()
+
+    conn.close()
+    return render_template("indicacoes_prestador.html",
+                         prestador=prestador, avaliacoes=avaliacoes,
+                         whatsapp_number=WHATSAPP_NUMBER)
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000)

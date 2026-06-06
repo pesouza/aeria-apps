@@ -10,6 +10,7 @@ services:
       CONTENT_FILE: /data/content.json
     volumes:
       - ./data:/app/data
+      - /opt/data/profiles/paulo-bot/indica-aqui:/data/indica-aqui
     labels:
       - traefik.enable=true
       - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`)

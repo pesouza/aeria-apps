@@ -75,8 +75,4 @@
 | Aluno marca e esquece | Lembrete automático reduz falta |
 | Só vc pode gerenciar | Qualquer aluno consulta e reserva sozinho |
 
-**Proposta de escambo:** implemento o sistema pra RAZ em troca de horários pra treinar. O que achar?
-
----
-
 *Demo gerada em 07/06/2026 — Aer.IA Creative Solutions*

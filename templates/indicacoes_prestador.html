@@ -52,6 +52,12 @@
                 </div>
             </div>
 
+            {% if prestador.bairro or prestador.cidade %}
+            <div class="ia-perfil-local">
+                📍 {{ prestador.bairro or '' }}{{ ', ' if prestador.bairro and prestador.cidade }}{{ prestador.cidade or '' }}{{ ' - ' if prestador.cidade and prestador.estado }}{{ prestador.estado or '' }}
+            </div>
+            {% endif %}
+
             {% if prestador.telefone %}
             <div class="ia-perfil-cta">
                 <a href="https://wa.me/{{ prestador.whatsapp or prestador.telefone }}" class="ia-btn ia-btn-whatsapp ia-btn-lg" target="_blank">

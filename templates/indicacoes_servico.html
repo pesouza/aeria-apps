@@ -67,6 +67,11 @@
                             {% endif %}
                             <span class="ia-stat-chip ia-chip-info">📋 {{ p.total_indicacoes }} indicações</span>
                         </div>
+                        {% if p.bairro or p.cidade %}
+                        <div class="ia-prestador-local">
+                            📍 {{ p.bairro or '' }}{{ ', ' if p.bairro and p.cidade }}{{ p.cidade or '' }}{{ ' - ' if p.cidade and p.estado }}{{ p.estado or '' }}
+                        </div>
+                        {% endif %}
                         {% if p.telefone %}
                         <div class="ia-prestador-contato">
                             <a href="https://wa.me/{{ p.whatsapp or p.telefone }}" class="ia-btn ia-btn-whatsapp" target="_blank">

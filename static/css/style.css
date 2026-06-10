@@ -181,6 +181,19 @@ nav a:hover::after {
   transform: scaleX(1);
 }
 
+nav a.nav-crm {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+nav a.nav-crm::after {
+  background: var(--green);
+}
+
+nav a.nav-crm:hover {
+  color: var(--green);
+}
+
 .hero {
   padding: 110px 0 70px;
 }

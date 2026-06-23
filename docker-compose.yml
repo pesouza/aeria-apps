@@ -18,13 +18,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 512M
     labels:
       - traefik.enable=true
+      - traefik.docker.network=traefik
       - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`)
       - traefik.http.routers.aeria.entrypoints=websecure
       - traefik.http.routers.aeria.tls.certresolver=letsencrypt

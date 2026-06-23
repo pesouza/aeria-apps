@@ -1,0 +1,32 @@
+# Deploy automático para aeria-apps.com.br
+# Triggers: push na main → SSH no VPS → git pull → restart container
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite execução manual pelo GitHub
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conectar via SSH e atualizar
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /workspace/aeria-apps
+            echo "→ Pull do git..."
+            git pull
+            echo "→ Restartando container..."
+            docker compose up -d --build
+            echo "→ Verificando health..."
+            sleep 3
+            curl -sf http://localhost:8000/health || echo "⚠ health check falhou"
+            echo "✅ Deploy concluído"

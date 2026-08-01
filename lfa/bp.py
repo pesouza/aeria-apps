@@ -407,7 +407,7 @@ def create_attendance():
     validate_csrf()
     topic = request.form.get("topic", "").strip()[:120]
     class_code = request.form.get("class_code", "").strip().upper()
-    minutes = max(5, min(int(request.form.get("minutes", "15") or 15), 180))
+    minutes = max(1, min(int(request.form.get("minutes", "5") or 5), 180))
     if len(topic) < 3 or not CLASS_RE.match(class_code):
         flash("Informe tópico e turma válidos.", "error")
         return redirect(url_for("lfa.professor"))

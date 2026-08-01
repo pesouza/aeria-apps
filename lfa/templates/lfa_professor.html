@@ -13,7 +13,7 @@
     <input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}">
     <label>Tópico<input name="topic" required placeholder="Ex: Aula 01 - Autômatos Finitos"></label>
     <label>Turma<input name="class_code" required placeholder="Ex: Turma A"></label>
-    <label>Minutos<input name="minutes" type="number" min="5" max="180" value="15"></label>
+    <label>Minutos<input name="minutes" type="number" min="1" max="180" value="5"></label>
     <button class="button">Gerar Código &amp; QR Code</button>
   </form>
   {% if sessions %}

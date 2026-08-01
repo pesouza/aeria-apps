@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """WSGI entrypoint para o app Flask com suporte ao Indica Aqui."""
+raise Exception("CRASH TEST: se esta mensagem aparecer nos logs, o deploy está funcionando.")
 import os
 import sys
 

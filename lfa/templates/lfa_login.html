@@ -10,5 +10,9 @@
     <label>Senha<input name="password" type="password" autocomplete="current-password" required></label>
     <button class="button" type="submit">Entrar</button>
   </form>
+  <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); text-align: center;">
+    <p class="muted">É o seu primeiro acesso ao portal?</p>
+    <a href="{{ url_for('lfa.primeiro_acesso') }}" class="button" style="background: transparent; border: 1px solid var(--brand); color: var(--brand); display: inline-block; margin-top: 0.5rem;">Cadastre sua senha no Primeiro Acesso</a>
+  </div>
 </section>
 {% endblock %}

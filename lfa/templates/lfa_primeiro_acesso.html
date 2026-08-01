@@ -1,0 +1,18 @@
+{% extends "lfa_base.html" %}
+{% block title %}Primeiro Acesso · Cadastrar Senha · LFA{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>Primeiro Acesso</h1>
+  <p class="muted">Informe seu RA (Número de Matrícula) cadastrado pelo professor e crie sua senha de acesso.</p>
+  <form method="post" action="{{ url_for('lfa.primeiro_acesso') }}">
+    <input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}">
+    <label>Número de Matrícula (RA)<input name="ra" value="{{ ra or '' }}" placeholder="Ex: RA202601" autocomplete="username" required></label>
+    <label>Nova Senha (mínimo 8 caracteres)<input name="password" type="password" minlength="8" autocomplete="new-password" required></label>
+    <label>Confirme a Nova Senha<input name="password_confirm" type="password" minlength="8" autocomplete="new-password" required></label>
+    <button class="button" type="submit">Cadastrar Senha e Entrar</button>
+  </form>
+  <div style="margin-top: 1.5rem; text-align: center;">
+    <a href="{{ url_for('lfa.login') }}" class="muted">Já cadastrou sua senha? Faça login aqui</a>
+  </div>
+</section>
+{% endblock %}

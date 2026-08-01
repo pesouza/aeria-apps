@@ -33,12 +33,7 @@ def get_lfa_db() -> sqlite3.Connection:
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
-        # Ensure schema exists on first connection
-        try:
-            conn.executescript(SCHEMA)
-            conn.commit()
-        except Exception:
-            pass
+        ensure_schema(conn)
         g.lfa_db = conn
     return g.lfa_db
 
@@ -63,10 +58,33 @@ def execute(sql: str, params: tuple = ()) -> None:
     db.commit()
 
 
-def init_lfa_db() -> None:
-    db = get_lfa_db()
-    db.executescript(SCHEMA)
-    db.commit()
+def ensure_schema(conn: sqlite3.Connection) -> None:
+    try:
+        conn.executescript(SCHEMA)
+        conn.commit()
+    except Exception:
+        pass
+    # Auto-migration for first_access column if table existed previously
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN first_access INTEGER NOT NULL DEFAULT 1")
+        conn.commit()
+    except Exception:
+        pass
+    # Auto-seed default professor if no professor exists
+    try:
+        cur = conn.execute("SELECT COUNT(*) as cnt FROM users WHERE role = 'professor'")
+        row = cur.fetchone()
+        if not row or row["cnt"] == 0:
+            prof_email = os.environ.get("LFA_PROF_EMAIL", "souzapeus@gmail.com")
+            prof_name = os.environ.get("LFA_PROF_NAME", "Professor Pedro Souza")
+            prof_pass = os.environ.get("LFA_PROF_PASSWORD", "ProfLFA2026!")
+            conn.execute(
+                "INSERT INTO users (role, name, email, password_hash, first_access, created_at) VALUES ('professor', ?, ?, ?, 0, ?)",
+                (prof_name, prof_email.lower(), generate_password_hash(prof_pass), now_iso()),
+            )
+            conn.commit()
+    except Exception as e:
+        print(f"Warning: Failed to seed default professor: {e}")
 
 
 def csrf_token() -> str:
@@ -145,15 +163,67 @@ def login():
         identifier = request.form.get("identifier", "").strip()
         password = request.form.get("password", "")
         user = query_one("SELECT * FROM users WHERE active = 1 AND (email = ? OR ra = ?)", (identifier.lower(), normalize_ra(identifier)))
-        if user and check_password_hash(user["password_hash"], password):
-            session.clear()
-            session.permanent = True
-            session["lfa_user_id"] = user["id"]
-            session["csrf_token"] = secrets.token_urlsafe(32)
-            flash("Login realizado com sucesso.", "success")
-            return redirect(url_for("lfa.professor") if user["role"] == "professor" else url_for("lfa.student"))
+        if user:
+            u_dict = dict(user)
+            first_acc = u_dict.get("first_access", 1)
+            pass_hash = u_dict.get("password_hash")
+            if user["role"] == "student" and (first_acc == 1 or not pass_hash):
+                flash("Este é o seu primeiro acesso. Por favor, cadastre sua senha.", "info")
+                return redirect(url_for("lfa.primeiro_acesso", ra=user["ra"]))
+            if pass_hash and check_password_hash(pass_hash, password):
+                session.clear()
+                session.permanent = True
+                session["lfa_user_id"] = user["id"]
+                session["csrf_token"] = secrets.token_urlsafe(32)
+                flash("Login realizado com sucesso.", "success")
+                return redirect(url_for("lfa.professor") if user["role"] == "professor" else url_for("lfa.student"))
         flash("Credenciais inválidas.", "error")
     return render_template("lfa_login.html", current_user=g.lfa_user)
+
+
+@lfa_bp.route("/primeiro-acesso", methods=["GET", "POST"])
+def primeiro_acesso():
+    ra_param = request.args.get("ra", "").strip().upper()
+    if request.method == "POST":
+        validate_csrf()
+        ra = normalize_ra(request.form.get("ra", ""))
+        password = request.form.get("password", "")
+        password_confirm = request.form.get("password_confirm", "")
+
+        if not RA_RE.match(ra):
+            flash("Formato de RA inválido.", "error")
+            return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
+
+        user = query_one("SELECT * FROM users WHERE ra = ? AND role = 'student' AND active = 1", (ra,))
+        if not user:
+            flash("RA não encontrado nas turmas cadastradas. Verifique com seu professor.", "error")
+            return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
+
+        u_dict = dict(user)
+        if u_dict.get("first_access") == 0 and u_dict.get("password_hash"):
+            flash("Sua senha já foi cadastrada anteriormente. Faça login normalmente.", "info")
+            return redirect(url_for("lfa.login"))
+
+        if len(password) < 8:
+            flash("A senha deve ter no mínimo 8 caracteres.", "error")
+            return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
+
+        if password != password_confirm:
+            flash("A confirmação de senha não confere.", "error")
+            return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
+
+        execute(
+            "UPDATE users SET password_hash = ?, first_access = 0 WHERE id = ?",
+            (generate_password_hash(password), user["id"]),
+        )
+        session.clear()
+        session.permanent = True
+        session["lfa_user_id"] = user["id"]
+        session["csrf_token"] = secrets.token_urlsafe(32)
+        flash("Senha cadastrada com sucesso! Bem-vindo(a) ao Portal LFA.", "success")
+        return redirect(url_for("lfa.student"))
+
+    return render_template("lfa_primeiro_acesso.html", ra=ra_param, current_user=g.lfa_user)
 
 
 @lfa_bp.route("/logout", methods=["POST"])
@@ -203,19 +273,21 @@ def add_student():
     name = request.form.get("name", "").strip()
     ra = normalize_ra(request.form.get("ra", ""))
     class_code = request.form.get("class_code", "").strip().upper()
-    password = request.form.get("password", "")
-    if len(name) < 3 or not RA_RE.match(ra) or not CLASS_RE.match(class_code) or len(password) < 8:
-        flash("Dados inválidos. Use RA alfanumérico, turma válida e senha com 8+ caracteres.", "error")
+    temp_password = request.form.get("password", "").strip()
+    if len(name) < 3 or not RA_RE.match(ra) or not CLASS_RE.match(class_code):
+        flash("Dados inválidos. Use RA alfanumérico e turma válida.", "error")
         return redirect(url_for("lfa.professor"))
+    pass_hash = generate_password_hash(temp_password) if len(temp_password) >= 8 else None
+    first_acc = 0 if pass_hash else 1
     try:
         db = get_lfa_db()
         cur = db.execute(
-            "INSERT INTO users (role, name, ra, class_code, password_hash, created_at) VALUES ('student', ?, ?, ?, ?, ?)",
-            (name, ra, class_code, generate_password_hash(password), now_iso()),
+            "INSERT INTO users (role, name, ra, class_code, password_hash, first_access, created_at) VALUES ('student', ?, ?, ?, ?, ?, ?)",
+            (name, ra, class_code, pass_hash, first_acc, now_iso()),
         )
         db.execute("INSERT INTO grades (user_id) VALUES (?)", (cur.lastrowid,))
         db.commit()
-        flash("Aluno cadastrado com sucesso.", "success")
+        flash(f"Aluno {name} ({ra}) cadastrado.", "success")
     except sqlite3.IntegrityError:
         flash("RA já cadastrado.", "error")
     return redirect(url_for("lfa.professor"))
@@ -307,7 +379,8 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE,
   ra TEXT UNIQUE,
   class_code TEXT,
-  password_hash TEXT NOT NULL,
+  password_hash TEXT,
+  first_access INTEGER NOT NULL DEFAULT 1,
   xp INTEGER NOT NULL DEFAULT 0,
   active INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL
@@ -343,3 +416,7 @@ CREATE TABLE IF NOT EXISTS attendance_records (
   UNIQUE(session_id, user_id)
 );
 """
+
+
+def init_lfa_db() -> None:
+    get_lfa_db()

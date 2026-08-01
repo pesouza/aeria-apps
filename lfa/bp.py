@@ -13,9 +13,9 @@ from flask import Blueprint, Flask, abort, flash, g, redirect, render_template, 
 from werkzeug.security import check_password_hash, generate_password_hash
 
 LFA_DIR = Path(__file__).resolve().parent
-DEFAULT_DB = Path(os.environ.get("LFA_DATABASE", "/data/lfa/portal.sqlite3"))
-if not DEFAULT_DB.parent.exists():
-    DEFAULT_DB = LFA_DIR / "data" / "portal.sqlite3"
+APP_ROOT = LFA_DIR.parent
+DEFAULT_DB_PATH = APP_ROOT / "data" / "lfa" / "portal.sqlite3"
+DEFAULT_DB = Path(os.environ.get("LFA_DATABASE", str(DEFAULT_DB_PATH)))
 
 RA_RE = re.compile(r"^[A-Z0-9]{4,20}$")
 CLASS_RE = re.compile(r"^[A-Z0-9._ -]{2,40}$")
@@ -26,10 +26,19 @@ lfa_bp = Blueprint("lfa", __name__, template_folder="templates", static_folder="
 def get_lfa_db() -> sqlite3.Connection:
     if "lfa_db" not in g:
         db_path = DEFAULT_DB
-        db_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
+        # Ensure schema exists on first connection
+        try:
+            conn.executescript(SCHEMA)
+            conn.commit()
+        except Exception:
+            pass
         g.lfa_db = conn
     return g.lfa_db
 

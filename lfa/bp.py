@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from zoneinfo import ZoneInfo
+
 import io
 import qrcode
 import qrcode.image.svg
@@ -143,8 +145,31 @@ def valid_url(value: str) -> bool:
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
+
+SP_TZ = ZoneInfo("America/Sao_Paulo")
+
+def now_sp() -> datetime:
+    return datetime.now(SP_TZ)
+
 def now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return now_sp().isoformat()
+
+def fmt_datetime_sp(value: str | None) -> str:
+    if not value:
+        return "--"
+    try:
+        dt = datetime.fromisoformat(str(value))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        dt_sp = dt.astimezone(SP_TZ)
+        return dt_sp.strftime("%d/%m/%Y às %H:%M")
+    except Exception:
+        return str(value)[:16].replace("T", " ")
+
+@lfa_bp.app_template_filter("fmt_dt")
+def fmt_dt_filter(value: str | None) -> str:
+    return fmt_datetime_sp(value)
+
 
 
 @lfa_bp.before_app_request
@@ -387,7 +412,7 @@ def create_attendance():
         flash("Informe tópico e turma válidos.", "error")
         return redirect(url_for("lfa.professor"))
     token = secrets.token_urlsafe(16).replace("-", "").replace("_", "")[:12].upper()
-    expires = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+    expires = now_sp() + timedelta(minutes=minutes)
     execute("INSERT INTO attendance_sessions (token, topic, class_code, expires_at, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?)", (token, topic, class_code, expires.isoformat(), g.lfa_user["id"], now_iso()))
     flash(f"Chamada criada. Código: {token}", "success")
     return redirect(url_for("lfa.professor"))
@@ -398,7 +423,10 @@ def record_attendance(token: str) -> None:
     if not sess:
         flash("Código de chamada inválido.", "error")
         return
-    if datetime.fromisoformat(sess["expires_at"]) < datetime.now(timezone.utc):
+    exp_dt = datetime.fromisoformat(sess["expires_at"])
+    if exp_dt.tzinfo is None:
+        exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+    if exp_dt < now_sp():
         flash("Código de chamada expirado.", "error")
         return
     if sess["class_code"] != g.lfa_user["class_code"]:

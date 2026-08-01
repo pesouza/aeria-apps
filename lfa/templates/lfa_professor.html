@@ -23,7 +23,7 @@
       <div>
         <span style="background: var(--brand); color: #00111f; font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 1rem; text-transform: uppercase;">Última Chamada Criada</span>
         <h3 style="margin: 0.5rem 0 0.2rem; font-size: 1.4rem;">{{ latest.topic }}</h3>
-        <p style="margin: 0;" class="muted">Turma: <strong>{{ latest.class_code }}</strong> &nbsp;|&nbsp; Expira em: <strong>{{ latest.expires_at[:16].replace('T', ' ') }}</strong></p>
+        <p style="margin: 0;" class="muted">Turma: <strong>{{ latest.class_code }}</strong> &nbsp;|&nbsp; Expira em: <strong>{{ latest.expires_at | fmt_dt }}</strong></p>
         <p style="margin: 0.5rem 0 0;">Presenças: <strong style="color: var(--ok); font-size: 1.1rem;">{{ latest.present_count }}/{{ latest.total_students }} alunos</strong></p>
         <p style="margin-top: 1rem;">
           <a href="{{ url_for('lfa.view_attendance_session', session_id=latest.id) }}" class="button" style="padding: 0.5rem 1rem;">Ampliar QR Code &amp; Ver Lista Completa &rarr;</a>
@@ -63,7 +63,7 @@
             <td>{{ s.class_code }}</td>
             <td><code>{{ s.token }}</code></td>
             <td><strong style="color: var(--brand);">{{ s.present_count }}/{{ s.total_students }}</strong></td>
-            <td><small class="muted">{{ s.expires_at[:16] }}</small></td>
+            <td><small class="muted">{{ s.expires_at | fmt_dt }}</small></td>
             <td>
               <a href="{{ url_for('lfa.view_attendance_session', session_id=s.id) }}" class="button" style="padding: 0.35rem 0.65rem; font-size: 0.85rem;">QR Code &amp; Controle</a>
             </td>

@@ -13,7 +13,7 @@
 
 <section class="panel">
   <h2>Chamada: {{ sess.topic }}</h2>
-  <p><strong>Turma:</strong> {{ sess.class_code }} &nbsp;|&nbsp; <strong>Código Token:</strong> <code>{{ sess.token }}</code> &nbsp;|&nbsp; <strong>Expira em:</strong> {{ sess.expires_at[:16] }}</p>
+  <p><strong>Turma:</strong> {{ sess.class_code }} &nbsp;|&nbsp; <strong>Código Token:</strong> <code>{{ sess.token }}</code> &nbsp;|&nbsp; <strong>Expira em:</strong> {{ sess.expires_at | fmt_dt }}</p>
 </section>
 
 <section class="grid two" style="margin-top: 1.5rem;">
@@ -45,7 +45,7 @@
               <td><strong>{{ s.name }}</strong></td>
               <td>
                 {% if s.checked_in_at %}
-                  <span style="color: var(--ok); font-weight: bold;">✔ Presente</span><br><small class="muted">{{ s.checked_in_at[:16] }}</small>
+                  <span style="color: var(--ok); font-weight: bold;">✔ Presente</span><br><small class="muted">{{ s.checked_in_at | fmt_dt }}</small>
                 {% else %}
                   <span style="color: var(--muted);">Ausente</span>
                 {% endif %}

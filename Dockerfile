@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_SYSTEM_PYTHON=1
 
-RUN apk add --no-cache sqlite-libs
+RUN apk add --no-cache sqlite-libs curl
 
 RUN pip install --no-cache-dir uv
 

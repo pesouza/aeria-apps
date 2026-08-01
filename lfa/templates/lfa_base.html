@@ -4,11 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Linguagens Formais e Autômatos{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('lfa.static', filename='lfa-icon.svg') }}">
   <link rel="stylesheet" href="{{ url_for('lfa.static', filename='styles.css') }}">
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="{{ url_for('lfa.index') }}">LFA</a>
+  <a class="brand-logo" href="{{ url_for('lfa.index') }}" style="display: inline-flex; align-items: center; text-decoration: none;">
+    <img src="{{ url_for('lfa.static', filename='lfa-logo.svg') }}" alt="LFA - Linguagens Formais e Autômatos" style="height: 42px; display: block;">
+  </a>
   <nav aria-label="Navegação principal">
     <a href="{{ url_for('lfa.index') }}">Início</a>
     {% if current_user %}

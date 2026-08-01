@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120">
+  <defs>
+    <linearGradient id="logo-brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+    <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Icon Symbol (Left) -->
+  <g transform="translate(10, 10)">
+    <rect width="100" height="100" rx="24" fill="#0f172a" stroke="url(#logo-brand-grad)" stroke-width="2" />
+    
+    <!-- State Arcs -->
+    <path d="M 35 50 A 20 20 0 0 1 65 50" fill="none" stroke="url(#logo-brand-grad)" stroke-width="3" filter="url(#logo-glow)" />
+    <polygon points="65,50 58,43 60,55" fill="#818cf8" />
+
+    <!-- Node 1 -->
+    <circle cx="35" cy="50" r="12" fill="#0b1329" stroke="#38bdf8" stroke-width="3" />
+    <circle cx="35" cy="50" r="4" fill="#38bdf8" />
+
+    <!-- Node 2 (Accepting) -->
+    <circle cx="65" cy="50" r="14" fill="#0b1329" stroke="url(#logo-brand-grad)" stroke-width="3" />
+    <circle cx="65" cy="50" r="10" fill="none" stroke="#818cf8" stroke-width="2" />
+    <circle cx="65" cy="50" r="4" fill="#c084fc" />
+  </g>
+
+  <!-- Typography (Right) -->
+  <text x="132" y="66" font-family="System-UI, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="48" font-weight="900" fill="url(#logo-brand-grad)" letter-spacing="2" filter="url(#logo-glow)">LFA</text>
+  <text x="134" y="88" font-family="System-UI, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#94a3b8" letter-spacing="3">LINGUAGENS FORMAIS &amp; AUTÔMATOS</text>
+</svg>

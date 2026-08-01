@@ -10,7 +10,7 @@ RUN apk add --no-cache sqlite-libs
 
 RUN pip install --no-cache-dir uv
 
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock* ./
 RUN uv sync --no-dev
 
 COPY . .

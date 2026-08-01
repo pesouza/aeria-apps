@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import io
+import qrcode
+import qrcode.image.svg
+
 import os
 import re
 import secrets
@@ -17,8 +21,8 @@ APP_ROOT = LFA_DIR.parent
 DEFAULT_DB_PATH = APP_ROOT / "data" / "lfa" / "portal.sqlite3"
 DEFAULT_DB = Path(os.environ.get("LFA_DATABASE", str(DEFAULT_DB_PATH)))
 
-RA_RE = re.compile(r"^[A-Z0-9]{4,20}$")
-CLASS_RE = re.compile(r"^[A-Z0-9._ -]{2,40}$")
+RA_RE = re.compile(r"^[A-Z0-9._ /-]{1,50}$")
+CLASS_RE = re.compile(r"^[A-Z0-9._ /-]{1,50}$")
 
 lfa_bp = Blueprint("lfa", __name__, template_folder="templates", static_folder="static", url_prefix="/lfa")
 
@@ -30,14 +34,20 @@ def get_lfa_db() -> sqlite3.Connection:
             db_path.parent.mkdir(parents=True, exist_ok=True)
         except Exception:
             pass
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=10.0)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
+        try:
+            conn.execute("PRAGMA journal_mode = WAL")
+            conn.execute("PRAGMA busy_timeout = 5000")
+        except Exception:
+            pass
         ensure_schema(conn)
         g.lfa_db = conn
     return g.lfa_db
 
 
+@lfa_bp.teardown_app_request
 def close_lfa_db(_: object | None = None) -> None:
     db = g.pop("lfa_db", None)
     if db is not None:
@@ -143,6 +153,9 @@ def load_lfa_user():
     user_id = session.get("lfa_user_id")
     if user_id:
         g.lfa_user = query_one("SELECT * FROM users WHERE id = ? AND active = 1", (user_id,))
+    token_arg = request.args.get("token", "").strip().upper()
+    if token_arg:
+        session["pending_attendance_token"] = token_arg
 
 
 @lfa_bp.app_template_global("lfa_csrf_token")
@@ -162,12 +175,24 @@ def login():
         validate_csrf()
         identifier = request.form.get("identifier", "").strip()
         password = request.form.get("password", "")
-        user = query_one("SELECT * FROM users WHERE active = 1 AND (email = ? OR ra = ?)", (identifier.lower(), normalize_ra(identifier)))
+        norm_id = normalize_ra(identifier)
+        clean_id = re.sub(r"[^A-Z0-9]", "", norm_id)
+        user = query_one(
+            """
+            SELECT * FROM users 
+            WHERE active = 1 AND (
+                email = ? 
+                OR ra = ? 
+                OR (ra IS NOT NULL AND REPLACE(REPLACE(REPLACE(REPLACE(ra, '-', ''), '.', ''), ' ', ''), '/', '') = ?)
+            )
+            """,
+            (identifier.lower(), norm_id, clean_id if clean_id else norm_id)
+        )
         if user:
             u_dict = dict(user)
             first_acc = u_dict.get("first_access", 1)
             pass_hash = u_dict.get("password_hash")
-            if user["role"] == "student" and (first_acc == 1 or not pass_hash):
+            if user["role"] == "student" and (first_acc == 1 or not pass_hash or pass_hash == ""):
                 flash("Este é o seu primeiro acesso. Por favor, cadastre sua senha.", "info")
                 return redirect(url_for("lfa.primeiro_acesso", ra=user["ra"]))
             if pass_hash and check_password_hash(pass_hash, password):
@@ -186,21 +211,32 @@ def primeiro_acesso():
     ra_param = request.args.get("ra", "").strip().upper()
     if request.method == "POST":
         validate_csrf()
-        ra = normalize_ra(request.form.get("ra", ""))
+        ra_raw = request.form.get("ra", "").strip()
+        ra = normalize_ra(ra_raw)
+        clean_ra = re.sub(r"[^A-Z0-9]", "", ra)
         password = request.form.get("password", "")
         password_confirm = request.form.get("password_confirm", "")
 
-        if not RA_RE.match(ra):
+        if not ra or not RA_RE.match(ra):
             flash("Formato de RA inválido.", "error")
-            return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
+            return render_template("lfa_primeiro_acesso.html", ra=ra_raw, current_user=g.lfa_user)
 
-        user = query_one("SELECT * FROM users WHERE ra = ? AND role = 'student' AND active = 1", (ra,))
+        user = query_one(
+            """
+            SELECT * FROM users 
+            WHERE role = 'student' AND active = 1 AND (
+                ra = ? 
+                OR (ra IS NOT NULL AND REPLACE(REPLACE(REPLACE(REPLACE(ra, '-', ''), '.', ''), ' ', ''), '/', '') = ?)
+            )
+            """,
+            (ra, clean_ra if clean_ra else ra)
+        )
         if not user:
             flash("RA não encontrado nas turmas cadastradas. Verifique com seu professor.", "error")
             return render_template("lfa_primeiro_acesso.html", ra=ra, current_user=g.lfa_user)
 
         u_dict = dict(user)
-        if u_dict.get("first_access") == 0 and u_dict.get("password_hash"):
+        if u_dict.get("first_access") == 0 and u_dict.get("password_hash") and u_dict.get("password_hash") != "":
             flash("Sua senha já foi cadastrada anteriormente. Faça login normalmente.", "info")
             return redirect(url_for("lfa.login"))
 
@@ -238,11 +274,19 @@ def logout():
 @lfa_bp.route("/aluno", methods=["GET", "POST"])
 @lfa_role_required("student")
 def student():
+    token_param = request.args.get("token", "").strip().upper() or session.pop("pending_attendance_token", None)
     if request.method == "POST":
         validate_csrf()
         token = request.form.get("attendance_token", "").strip().upper()
         record_attendance(token)
         return redirect(url_for("lfa.student"))
+    if token_param and request.method == "GET":
+        sess = query_one("SELECT * FROM attendance_sessions WHERE token = ?", (token_param,))
+        if sess:
+            already = query_one("SELECT id FROM attendance_records WHERE session_id = ? AND user_id = ?", (sess["id"], g.lfa_user["id"]))
+            if not already:
+                record_attendance(token_param)
+                return redirect(url_for("lfa.student"))
     user = g.lfa_user
     grades = query_one("SELECT * FROM grades WHERE user_id = ?", (user["id"],))
     materials = query_all("SELECT * FROM materials ORDER BY created_at DESC")
@@ -254,7 +298,7 @@ def student():
         ORDER BY r.created_at DESC
     """, (user["id"],))
     ranking = query_all("SELECT name, class_code, xp FROM users WHERE role = 'student' AND active = 1 ORDER BY xp DESC, name ASC LIMIT 10")
-    return render_template("lfa_student.html", grades=grades, materials=materials, attendance=attendance, ranking=ranking, current_user=user)
+    return render_template("lfa_student.html", grades=grades, materials=materials, attendance=attendance, ranking=ranking, current_user=user, initial_token=token_param or "")
 
 
 @lfa_bp.route("/professor", methods=["GET"])
@@ -262,7 +306,13 @@ def student():
 def professor():
     students = query_all("SELECT u.*, g.np1, g.np2, g.nt, g.exam FROM users u LEFT JOIN grades g ON g.user_id = u.id WHERE u.role='student' ORDER BY u.class_code, u.name")
     materials = query_all("SELECT * FROM materials ORDER BY created_at DESC")
-    sessions = query_all("SELECT * FROM attendance_sessions ORDER BY created_at DESC LIMIT 10")
+    sessions = query_all("""
+        SELECT s.*, 
+               (SELECT COUNT(*) FROM attendance_records r WHERE r.session_id = s.id) as present_count,
+               (SELECT COUNT(*) FROM users u WHERE u.role = 'student' AND u.class_code = s.class_code) as total_students
+        FROM attendance_sessions s 
+        ORDER BY s.created_at DESC LIMIT 15
+    """)
     return render_template("lfa_professor.html", students=students, materials=materials, sessions=sessions, current_user=g.lfa_user)
 
 
@@ -274,11 +324,11 @@ def add_student():
     ra = normalize_ra(request.form.get("ra", ""))
     class_code = request.form.get("class_code", "").strip().upper()
     temp_password = request.form.get("password", "").strip()
-    if len(name) < 3 or not RA_RE.match(ra) or not CLASS_RE.match(class_code):
-        flash("Dados inválidos. Use RA alfanumérico e turma válida.", "error")
+    if len(name) < 2 or not ra or not RA_RE.match(ra) or not CLASS_RE.match(class_code):
+        flash("Dados inválidos. Verifique se Nome, RA e Turma foram preenchidos.", "error")
         return redirect(url_for("lfa.professor"))
-    pass_hash = generate_password_hash(temp_password) if len(temp_password) >= 8 else None
-    first_acc = 0 if pass_hash else 1
+    pass_hash = generate_password_hash(temp_password) if temp_password else ""
+    first_acc = 0 if temp_password else 1
     try:
         db = get_lfa_db()
         cur = db.execute(
@@ -287,9 +337,12 @@ def add_student():
         )
         db.execute("INSERT INTO grades (user_id) VALUES (?)", (cur.lastrowid,))
         db.commit()
-        flash(f"Aluno {name} ({ra}) cadastrado.", "success")
-    except sqlite3.IntegrityError:
-        flash("RA já cadastrado.", "error")
+        flash(f"Aluno {name} ({ra}) cadastrado com sucesso.", "success")
+    except sqlite3.IntegrityError as e:
+        if "ra" in str(e).lower():
+            flash("RA já cadastrado.", "error")
+        else:
+            flash(f"Erro ao cadastrar aluno: {e}", "error")
     return redirect(url_for("lfa.professor"))
 
 
@@ -420,3 +473,58 @@ CREATE TABLE IF NOT EXISTS attendance_records (
 
 def init_lfa_db() -> None:
     get_lfa_db()
+
+
+@lfa_bp.route("/chamada/<token>/qrcode.svg")
+def chamada_qrcode_svg(token: str):
+    sess = query_one("SELECT * FROM attendance_sessions WHERE token = ?", (token.upper(),))
+    if not sess:
+        abort(404)
+    target_url = f"{request.scheme}://{request.host}{url_for('lfa.student', token=sess['token'])}"
+    img = qrcode.make(target_url, image_factory=qrcode.image.svg.SvgImage)
+    buf = io.BytesIO()
+    img.save(buf)
+    buf.seek(0)
+    return current_app.response_class(buf.getvalue(), mimetype="image/svg+xml")
+
+
+@lfa_bp.route("/professor/chamada/<int:session_id>")
+@lfa_role_required("professor")
+def view_attendance_session(session_id: int):
+    sess = query_one("SELECT * FROM attendance_sessions WHERE id = ?", (session_id,))
+    if not sess:
+        abort(404)
+    students = query_all("""
+        SELECT u.id, u.name, u.ra, u.class_code, r.created_at as checked_in_at
+        FROM users u
+        LEFT JOIN attendance_records r ON r.user_id = u.id AND r.session_id = ?
+        WHERE u.role = 'student' AND u.class_code = ?
+        ORDER BY u.name
+    """, (session_id, sess["class_code"]))
+    
+    qrcode_url = url_for("lfa.chamada_qrcode_svg", token=sess["token"])
+    target_url = f"{request.scheme}://{request.host}{url_for('lfa.student', token=sess['token'])}"
+    
+    return render_template("lfa_chamada_detail.html", sess=sess, students=students, qrcode_url=qrcode_url, target_url=target_url, current_user=g.lfa_user)
+
+
+@lfa_bp.route("/professor/chamada/<int:session_id>/toggle-presenca", methods=["POST"])
+@lfa_role_required("professor")
+def toggle_student_attendance(session_id: int):
+    validate_csrf()
+    user_id = int(request.form.get("user_id", "0"))
+    sess = query_one("SELECT * FROM attendance_sessions WHERE id = ?", (session_id,))
+    if not sess:
+        abort(404)
+    
+    record = query_one("SELECT * FROM attendance_records WHERE session_id = ? AND user_id = ?", (session_id, user_id))
+    if record:
+        execute("DELETE FROM attendance_records WHERE session_id = ? AND user_id = ?", (session_id, user_id))
+        execute("UPDATE users SET xp = MAX(0, xp - 10) WHERE id = ?", (user_id,))
+        flash("Presença removida.", "info")
+    else:
+        execute("INSERT INTO attendance_records (session_id, user_id, created_at) VALUES (?, ?, ?)", (session_id, user_id, now_iso()))
+        execute("UPDATE users SET xp = xp + 10 WHERE id = ?", (user_id,))
+        flash("Presença registrada manualmente.", "success")
+        
+    return redirect(url_for("lfa.view_attendance_session", session_id=session_id))

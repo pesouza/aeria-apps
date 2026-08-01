@@ -143,7 +143,7 @@ def admin():
 
 @app.errorhandler(404)
 def not_found(_):
-    return render_template('404.html'), 404
+    return render_template('404.html', content=load_content()), 404
 
 
 @app.errorhandler(500)
@@ -167,7 +167,9 @@ except Exception as e:
 @app.before_request
 def lfa_subdomain_router():
     host = request.host.split(':')[0].lower()
-    if host in ("lfa.aeria-apps.com.br", "curso-lfa.aeria-apps.com.br", "curso.aeria-apps.com.br"):
-        path = request.path
-        if not path.startswith("/lfa") and not path.startswith("/static"):
-            return redirect("/lfa" + path if path != "/" else "/lfa/")
+    path = request.path
+    lfa_paths = ("/professor", "/aluno", "/login", "/primeiro-acesso", "/chamada", "/logout")
+    is_lfa_host = host in ("lfa.aeria-apps.com.br", "curso-lfa.aeria-apps.com.br", "curso.aeria-apps.com.br")
+    is_lfa_path = any(path == p or path.startswith(p + "/") for p in lfa_paths)
+    if (is_lfa_host or is_lfa_path) and not path.startswith("/lfa") and not path.startswith("/static"):
+        return redirect("/lfa" + path if path != "/" else "/lfa/")

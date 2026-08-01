@@ -1,0 +1,67 @@
+{% extends "lfa_base.html" %}
+{% block title %}Controle de Presença & QR Code · LFA{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('lfa.professor') }}" class="button" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; display: inline-block;">&larr; Voltar ao Painel Professor</a></p>
+
+<h1>Controle de Presença &amp; QR Code</h1>
+
+<section class="panel">
+  <h2>Chamada: {{ sess.topic }}</h2>
+  <p><strong>Turma:</strong> {{ sess.class_code }} &nbsp;|&nbsp; <strong>Código Token:</strong> <code>{{ sess.token }}</code> &nbsp;|&nbsp; <strong>Expira em:</strong> {{ sess.expires_at[:16] }}</p>
+</section>
+
+<section class="grid two" style="margin-top: 1.5rem;">
+  <article class="panel" style="text-align: center;">
+    <h2>QR Code para os Alunos</h2>
+    <p class="muted">Projete na tela ou compartilhe para os alunos escanearem com o celular:</p>
+    <div style="background: white; padding: 1rem; border-radius: 1rem; display: inline-block; margin: 1rem 0;">
+      <img src="{{ qrcode_url }}" alt="QR Code Chamada" style="width: 240px; height: 240px; display: block;">
+    </div>
+    <p><small class="muted">Link direto para os alunos:</small><br><a href="{{ target_url }}" target="_blank" style="word-break: break-all; font-family: monospace;">{{ target_url }}</a></p>
+  </article>
+
+  <article class="panel">
+    <h2>Lista da Turma {{ sess.class_code }} (Controle)</h2>
+    {% if students %}
+      <table>
+        <thead>
+          <tr>
+            <th>RA</th>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in students %}
+            <tr>
+              <td><code>{{ s.ra }}</code></td>
+              <td><strong>{{ s.name }}</strong></td>
+              <td>
+                {% if s.checked_in_at %}
+                  <span style="color: var(--ok); font-weight: bold;">✔ Presente</span><br><small class="muted">{{ s.checked_in_at[:16] }}</small>
+                {% else %}
+                  <span style="color: var(--muted);">Ausente</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="post" action="{{ url_for('lfa.toggle_student_attendance', session_id=sess.id) }}" style="margin: 0;">
+                  <input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}">
+                  <input type="hidden" name="user_id" value="{{ s.id }}">
+                  {% if s.checked_in_at %}
+                    <button type="submit" style="background: #334155; color: #cbd5e1; padding: 0.35rem 0.6rem; font-size: 0.85rem;">Remover</button>
+                  {% else %}
+                    <button type="submit" style="background: var(--ok); color: #00111f; padding: 0.35rem 0.6rem; font-size: 0.85rem;">Marcar Presença</button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">Nenhum aluno cadastrado nesta turma.</p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

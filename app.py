@@ -13,6 +13,7 @@ CONTENT_FILE = Path(os.getenv('CONTENT_FILE', BASE_DIR / 'data' / 'content.json'
 INDICA_DB = Path(os.getenv('INDICA_DB', '/data/indica-aqui/indica_aqui.db'))
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
+app.secret_key = os.getenv('SECRET_KEY', 'aeria-apps-default-secret-key-2026')
 
 
 def get_indica_db():
@@ -147,7 +148,7 @@ def not_found(_):
 
 @app.errorhandler(500)
 def server_error(_):
-    return render_template('500.html'), 500
+    return render_template('500.html', content=load_content()), 500
 
 
 # ─── LFA Course Portal & Subdomain Routing ─────────────────────────────

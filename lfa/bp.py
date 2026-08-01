@@ -528,3 +528,16 @@ def toggle_student_attendance(session_id: int):
         flash("Presença registrada manualmente.", "success")
         
     return redirect(url_for("lfa.view_attendance_session", session_id=session_id))
+
+
+@lfa_bp.route("/professor/chamada/<int:session_id>/deletar", methods=["POST"])
+@lfa_role_required("professor")
+def delete_attendance_session(session_id: int):
+    validate_csrf()
+    sess = query_one("SELECT * FROM attendance_sessions WHERE id = ?", (session_id,))
+    if not sess:
+        abort(404)
+    execute("DELETE FROM attendance_records WHERE session_id = ?", (session_id,))
+    execute("DELETE FROM attendance_sessions WHERE id = ?", (session_id,))
+    flash("Chamada apagada com sucesso.", "info")
+    return redirect(url_for("lfa.professor"))

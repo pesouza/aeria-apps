@@ -27,6 +27,10 @@
         <p style="margin: 0.5rem 0 0;">Presenças: <strong style="color: var(--ok); font-size: 1.1rem;">{{ latest.present_count }}/{{ latest.total_students }} alunos</strong></p>
         <p style="margin-top: 1rem;">
           <a href="{{ url_for('lfa.view_attendance_session', session_id=latest.id) }}" class="button" style="padding: 0.5rem 1rem;">Ampliar QR Code &amp; Ver Lista Completa &rarr;</a>
+          <form method="post" action="{{ url_for('lfa.delete_attendance_session', session_id=latest.id) }}" onsubmit="return confirm('Tem certeza que deseja apagar esta chamada?');" style="display: inline-block; margin-left: 0.5rem;">
+            <input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}">
+            <button type="submit" style="background: var(--err); color: white; padding: 0.5rem 1rem; border-radius: 0.65rem;">Apagar Chamada</button>
+          </form>
         </p>
       </div>
       <div style="text-align: center; background: white; padding: 0.8rem; border-radius: 0.8rem;">

@@ -1,7 +1,13 @@
 {% extends "lfa_base.html" %}
 {% block title %}Controle de Presença & QR Code · LFA{% endblock %}
 {% block content %}
-<p><a href="{{ url_for('lfa.professor') }}" class="button" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem; display: inline-block;">&larr; Voltar ao Painel Professor</a></p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+  <a href="{{ url_for('lfa.professor') }}" class="button" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.8rem;">&larr; Voltar ao Painel Professor</a>
+  <form method="post" action="{{ url_for('lfa.delete_attendance_session', session_id=sess.id) }}" onsubmit="return confirm('Tem certeza que deseja apagar esta chamada?');" style="margin: 0;">
+    <input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}">
+    <button type="submit" style="background: var(--err); color: white; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: 0.5rem;">Apagar Chamada</button>
+  </form>
+</div>
 
 <h1>Controle de Presença &amp; QR Code</h1>
 

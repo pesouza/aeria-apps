@@ -1,0 +1,336 @@
+from __future__ import annotations
+
+import os
+import re
+import secrets
+import sqlite3
+from datetime import datetime, timedelta, timezone
+from functools import wraps
+from pathlib import Path
+from urllib.parse import urlparse
+
+from flask import Blueprint, Flask, abort, flash, g, redirect, render_template, request, session, url_for, current_app, send_from_directory
+from werkzeug.security import check_password_hash, generate_password_hash
+
+LFA_DIR = Path(__file__).resolve().parent
+DEFAULT_DB = Path(os.environ.get("LFA_DATABASE", "/data/lfa/portal.sqlite3"))
+if not DEFAULT_DB.parent.exists():
+    DEFAULT_DB = LFA_DIR / "data" / "portal.sqlite3"
+
+RA_RE = re.compile(r"^[A-Z0-9]{4,20}$")
+CLASS_RE = re.compile(r"^[A-Z0-9._ -]{2,40}$")
+
+lfa_bp = Blueprint("lfa", __name__, template_folder="templates", static_folder="static", url_prefix="/lfa")
+
+
+def get_lfa_db() -> sqlite3.Connection:
+    if "lfa_db" not in g:
+        db_path = DEFAULT_DB
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        g.lfa_db = conn
+    return g.lfa_db
+
+
+def close_lfa_db(_: object | None = None) -> None:
+    db = g.pop("lfa_db", None)
+    if db is not None:
+        db.close()
+
+
+def query_all(sql: str, params: tuple = ()) -> list[sqlite3.Row]:
+    return get_lfa_db().execute(sql, params).fetchall()
+
+
+def query_one(sql: str, params: tuple = ()) -> sqlite3.Row | None:
+    return get_lfa_db().execute(sql, params).fetchone()
+
+
+def execute(sql: str, params: tuple = ()) -> None:
+    db = get_lfa_db()
+    db.execute(sql, params)
+    db.commit()
+
+
+def init_lfa_db() -> None:
+    db = get_lfa_db()
+    db.executescript(SCHEMA)
+    db.commit()
+
+
+def csrf_token() -> str:
+    token = session.get("csrf_token")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session["csrf_token"] = token
+    return token
+
+
+def validate_csrf() -> None:
+    if request.method == "POST" and request.form.get("csrf_token") != session.get("csrf_token"):
+        abort(400, "CSRF token inválido")
+
+
+def lfa_login_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if g.get("lfa_user") is None:
+            flash("Faça login para continuar.", "warning")
+            return redirect(url_for("lfa.login"))
+        return view(*args, **kwargs)
+    return wrapped
+
+
+def lfa_role_required(role: str):
+    def decorator(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            user = g.get("lfa_user")
+            if user is None:
+                return redirect(url_for("lfa.login"))
+            if user["role"] != role:
+                abort(403)
+            return view(*args, **kwargs)
+        return wrapped
+    return decorator
+
+
+def normalize_ra(value: str) -> str:
+    return value.strip().upper()
+
+
+def valid_url(value: str) -> bool:
+    parsed = urlparse(value)
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+@lfa_bp.before_app_request
+def load_lfa_user():
+    g.lfa_user = None
+    user_id = session.get("lfa_user_id")
+    if user_id:
+        g.lfa_user = query_one("SELECT * FROM users WHERE id = ? AND active = 1", (user_id,))
+
+
+@lfa_bp.app_template_global("lfa_csrf_token")
+def lfa_csrf_token_global():
+    return csrf_token()
+
+
+@lfa_bp.route("/")
+def index():
+    materials = query_all("SELECT title, url, created_at FROM materials ORDER BY created_at DESC LIMIT 6")
+    return render_template("lfa_index.html", materials=materials, current_user=g.lfa_user)
+
+
+@lfa_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        validate_csrf()
+        identifier = request.form.get("identifier", "").strip()
+        password = request.form.get("password", "")
+        user = query_one("SELECT * FROM users WHERE active = 1 AND (email = ? OR ra = ?)", (identifier.lower(), normalize_ra(identifier)))
+        if user and check_password_hash(user["password_hash"], password):
+            session.clear()
+            session.permanent = True
+            session["lfa_user_id"] = user["id"]
+            session["csrf_token"] = secrets.token_urlsafe(32)
+            flash("Login realizado com sucesso.", "success")
+            return redirect(url_for("lfa.professor") if user["role"] == "professor" else url_for("lfa.student"))
+        flash("Credenciais inválidas.", "error")
+    return render_template("lfa_login.html", current_user=g.lfa_user)
+
+
+@lfa_bp.route("/logout", methods=["POST"])
+@lfa_login_required
+def logout():
+    validate_csrf()
+    session.clear()
+    flash("Sessão encerrada.", "success")
+    return redirect(url_for("lfa.index"))
+
+
+@lfa_bp.route("/aluno", methods=["GET", "POST"])
+@lfa_role_required("student")
+def student():
+    if request.method == "POST":
+        validate_csrf()
+        token = request.form.get("attendance_token", "").strip().upper()
+        record_attendance(token)
+        return redirect(url_for("lfa.student"))
+    user = g.lfa_user
+    grades = query_one("SELECT * FROM grades WHERE user_id = ?", (user["id"],))
+    materials = query_all("SELECT * FROM materials ORDER BY created_at DESC")
+    attendance = query_all("""
+        SELECT s.topic, s.class_code, s.expires_at, r.created_at
+        FROM attendance_records r
+        JOIN attendance_sessions s ON s.id = r.session_id
+        WHERE r.user_id = ?
+        ORDER BY r.created_at DESC
+    """, (user["id"],))
+    ranking = query_all("SELECT name, class_code, xp FROM users WHERE role = 'student' AND active = 1 ORDER BY xp DESC, name ASC LIMIT 10")
+    return render_template("lfa_student.html", grades=grades, materials=materials, attendance=attendance, ranking=ranking, current_user=user)
+
+
+@lfa_bp.route("/professor", methods=["GET"])
+@lfa_role_required("professor")
+def professor():
+    students = query_all("SELECT u.*, g.np1, g.np2, g.nt, g.exam FROM users u LEFT JOIN grades g ON g.user_id = u.id WHERE u.role='student' ORDER BY u.class_code, u.name")
+    materials = query_all("SELECT * FROM materials ORDER BY created_at DESC")
+    sessions = query_all("SELECT * FROM attendance_sessions ORDER BY created_at DESC LIMIT 10")
+    return render_template("lfa_professor.html", students=students, materials=materials, sessions=sessions, current_user=g.lfa_user)
+
+
+@lfa_bp.route("/professor/alunos", methods=["POST"])
+@lfa_role_required("professor")
+def add_student():
+    validate_csrf()
+    name = request.form.get("name", "").strip()
+    ra = normalize_ra(request.form.get("ra", ""))
+    class_code = request.form.get("class_code", "").strip().upper()
+    password = request.form.get("password", "")
+    if len(name) < 3 or not RA_RE.match(ra) or not CLASS_RE.match(class_code) or len(password) < 8:
+        flash("Dados inválidos. Use RA alfanumérico, turma válida e senha com 8+ caracteres.", "error")
+        return redirect(url_for("lfa.professor"))
+    try:
+        db = get_lfa_db()
+        cur = db.execute(
+            "INSERT INTO users (role, name, ra, class_code, password_hash, created_at) VALUES ('student', ?, ?, ?, ?, ?)",
+            (name, ra, class_code, generate_password_hash(password), now_iso()),
+        )
+        db.execute("INSERT INTO grades (user_id) VALUES (?)", (cur.lastrowid,))
+        db.commit()
+        flash("Aluno cadastrado com sucesso.", "success")
+    except sqlite3.IntegrityError:
+        flash("RA já cadastrado.", "error")
+    return redirect(url_for("lfa.professor"))
+
+
+@lfa_bp.route("/professor/materiais", methods=["POST"])
+@lfa_role_required("professor")
+def add_material():
+    validate_csrf()
+    title = request.form.get("title", "").strip()
+    url = request.form.get("url", "").strip()
+    if len(title) < 3 or not valid_url(url):
+        flash("Informe título e URL http/https válidos.", "error")
+    else:
+        execute("INSERT INTO materials (title, url, created_by, created_at) VALUES (?, ?, ?, ?)", (title, url, g.lfa_user["id"], now_iso()))
+        flash("Material publicado.", "success")
+    return redirect(url_for("lfa.professor"))
+
+
+@lfa_bp.route("/professor/notas", methods=["POST"])
+@lfa_role_required("professor")
+def update_grades():
+    validate_csrf()
+    user_id = int(request.form.get("user_id", "0"))
+    if not query_one("SELECT id FROM users WHERE id = ? AND role = 'student'", (user_id,)):
+        abort(404)
+    values = tuple(parse_grade(request.form.get(field)) for field in ["np1", "np2", "nt", "exam"])
+    execute("""
+        INSERT INTO grades (user_id, np1, np2, nt, exam) VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET np1=excluded.np1, np2=excluded.np2, nt=excluded.nt, exam=excluded.exam
+    """, (user_id, *values))
+    flash("Notas atualizadas.", "success")
+    return redirect(url_for("lfa.professor"))
+
+
+@lfa_bp.route("/professor/chamada", methods=["POST"])
+@lfa_role_required("professor")
+def create_attendance():
+    validate_csrf()
+    topic = request.form.get("topic", "").strip()[:120]
+    class_code = request.form.get("class_code", "").strip().upper()
+    minutes = max(5, min(int(request.form.get("minutes", "15") or 15), 180))
+    if len(topic) < 3 or not CLASS_RE.match(class_code):
+        flash("Informe tópico e turma válidos.", "error")
+        return redirect(url_for("lfa.professor"))
+    token = secrets.token_urlsafe(16).replace("-", "").replace("_", "")[:12].upper()
+    expires = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+    execute("INSERT INTO attendance_sessions (token, topic, class_code, expires_at, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?)", (token, topic, class_code, expires.isoformat(), g.lfa_user["id"], now_iso()))
+    flash(f"Chamada criada. Código: {token}", "success")
+    return redirect(url_for("lfa.professor"))
+
+
+def record_attendance(token: str) -> None:
+    sess = query_one("SELECT * FROM attendance_sessions WHERE token = ?", (token,))
+    if not sess:
+        flash("Código de chamada inválido.", "error")
+        return
+    if datetime.fromisoformat(sess["expires_at"]) < datetime.now(timezone.utc):
+        flash("Código de chamada expirado.", "error")
+        return
+    if sess["class_code"] != g.lfa_user["class_code"]:
+        flash("Código pertence a outra turma.", "error")
+        return
+    try:
+        db = get_lfa_db()
+        db.execute("INSERT INTO attendance_records (session_id, user_id, created_at) VALUES (?, ?, ?)", (sess["id"], g.lfa_user["id"], now_iso()))
+        db.execute("UPDATE users SET xp = xp + 10 WHERE id = ?", (g.lfa_user["id"],))
+        db.commit()
+        flash("Presença registrada.", "success")
+    except sqlite3.IntegrityError:
+        flash("Presença já registrada para esta chamada.", "warning")
+
+
+def parse_grade(value: str | None):
+    if value is None or value.strip() == "":
+        return None
+    try:
+        grade = float(value.replace(",", "."))
+    except ValueError:
+        return None
+    return max(0.0, min(10.0, grade))
+
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  role TEXT NOT NULL CHECK(role IN ('student', 'professor')),
+  name TEXT NOT NULL,
+  email TEXT UNIQUE,
+  ra TEXT UNIQUE,
+  class_code TEXT,
+  password_hash TEXT NOT NULL,
+  xp INTEGER NOT NULL DEFAULT 0,
+  active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS grades (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  np1 REAL,
+  np2 REAL,
+  nt REAL,
+  exam REAL
+);
+CREATE TABLE IF NOT EXISTS materials (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  created_by INTEGER NOT NULL REFERENCES users(id),
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS attendance_sessions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  token TEXT NOT NULL UNIQUE,
+  topic TEXT NOT NULL,
+  class_code TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  created_by INTEGER NOT NULL REFERENCES users(id),
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS attendance_records (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id INTEGER NOT NULL REFERENCES attendance_sessions(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL,
+  UNIQUE(session_id, user_id)
+);
+"""

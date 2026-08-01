@@ -21,7 +21,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
-      - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`)
+      - traefik.http.routers.aeria.rule=Host(`aeria-apps.com.br`) || Host(`www.aeria-apps.com.br`) || Host(`lfa.aeria-apps.com.br`) || Host(`curso-lfa.aeria-apps.com.br`) || Host(`curso.aeria-apps.com.br`)
       - traefik.http.routers.aeria.entrypoints=websecure
       - traefik.http.routers.aeria.tls.certresolver=letsencrypt
       - traefik.http.services.aeria.loadbalancer.server.port=8000

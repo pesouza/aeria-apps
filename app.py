@@ -5,7 +5,7 @@ import os
 import sqlite3
 from pathlib import Path
 
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request
 
 BASE_DIR = Path(__file__).resolve().parent
 CONTENT_FILE = Path(os.getenv('CONTENT_FILE', BASE_DIR / 'data' / 'content.json'))
@@ -39,6 +39,14 @@ def index():
 @app.get('/health')
 def health():
     return jsonify(status='ok')
+
+
+# ─── Alpha Points ──────────────────────────────────────────────────────
+
+
+@app.get('/alpha/')
+def alpha_landing():
+    return render_template('alpha-points.html')
 
 
 # ─── Indica Aqui ───────────────────────────────────────────────────────
@@ -117,6 +125,15 @@ def indica_prestador(prestador_id):
     return render_template('indicacoes_prestador.html', prestador=prestador, avaliacoes=avaliacoes)
 
 
+
+# ─── NexGen School ─────────────────────────────────────────────────────
+
+
+@app.get('/ng/')
+def nexgen():
+    return render_template('nexgen.html')
+
+
 # ─── Admin ─────────────────────────────────────────────────────────────
 @app.get('/admin')
 def admin():
@@ -131,3 +148,25 @@ def not_found(_):
 @app.errorhandler(500)
 def server_error(_):
     return render_template('500.html'), 500
+
+
+# ─── LFA Course Portal & Subdomain Routing ─────────────────────────────
+from lfa.bp import lfa_bp, init_lfa_db
+
+app.register_blueprint(lfa_bp)
+
+# Initialize LFA DB schema when app starts
+try:
+    with app.app_context():
+        init_lfa_db()
+except Exception as e:
+    print(f"Warning: Failed to init LFA DB: {e}")
+
+
+@app.before_request
+def lfa_subdomain_router():
+    host = request.host.split(':')[0].lower()
+    if host in ("lfa.aeria-apps.com.br", "curso-lfa.aeria-apps.com.br", "curso.aeria-apps.com.br"):
+        path = request.path
+        if not path.startswith("/lfa") and not path.startswith("/static"):
+            return redirect("/lfa" + path if path != "/" else "/lfa/")

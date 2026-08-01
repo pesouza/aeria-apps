@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Linguagens Formais e Autômatos{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('lfa.static', filename='styles.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="{{ url_for('lfa.index') }}">LFA</a>
+  <nav aria-label="Navegação principal">
+    <a href="{{ url_for('lfa.index') }}">Início</a>
+    {% if current_user %}
+      {% if current_user.role == 'professor' %}<a href="{{ url_for('lfa.professor') }}">Painel professor</a>{% endif %}
+      {% if current_user.role == 'student' %}<a href="{{ url_for('lfa.student') }}">Área do aluno</a>{% endif %}
+      <form class="inline" method="post" action="{{ url_for('lfa.logout') }}"><input type="hidden" name="csrf_token" value="{{ lfa_csrf_token() }}"><button>Sair</button></form>
+    {% else %}
+      <a href="{{ url_for('lfa.login') }}">Entrar</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="flash-list" role="status">{% for category, message in messages %}<p class="flash {{ category }}">{{ message }}</p>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer">Curso de Linguagens Formais e Autômatos · Portal de Apoio Oficial</footer>
+</body>
+</html>

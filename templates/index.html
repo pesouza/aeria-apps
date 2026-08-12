@@ -16,6 +16,7 @@
       <a href="#applications">Aplicações</a>
       <a href="#infrastructure">Infraestrutura</a>
       <a href="#contact">Contato</a>
+      <a class="nav-crm" href="https://atendeai.aeria-apps.com.br" target="_blank" rel="noopener" style="margin-right: 8px;">AtendeAI Demo</a>
       <a class="nav-crm" href="https://crm.aeria-apps.com.br" target="_blank" rel="noopener">Área do Cliente</a>
     </nav>
 
@@ -31,6 +32,7 @@
   <a href="#applications" class="mobile-link">Aplicações</a>
   <a href="#infrastructure" class="mobile-link">Infraestrutura</a>
   <a href="#contact" class="mobile-link">Contato</a>
+  <a href="https://atendeai.aeria-apps.com.br" class="mobile-link" target="_blank" rel="noopener">AtendeAI Demo</a>
   <a href="https://crm.aeria-apps.com.br" class="mobile-link" target="_blank" rel="noopener">Área do Cliente</a>
   <a href="https://wa.me/551231973198" class="mobile-link mobile-cta">Agendar diagnóstico</a>
 </nav>
@@ -171,20 +173,31 @@
       <article class="application-card">
         <div class="application-index">01</div>
 
-        <h3>Atendimento operacional autônomo</h3>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+          <h3>Atendimento comercial autônomo (AtendeAI)</h3>
+          <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">Demo ao vivo</span>
+        </div>
 
         <figure class="image-card">
           <img
             src="{{ url_for('static', filename='img/app-atendimento.jpg') }}"
-            alt="Dashboard de atendimento autônomo gerenciando conversas, confirmações e follow-ups"
+            alt="Dashboard de atendimento autônomo AtendeAI gerenciando conversas, confirmações e follow-ups"
             loading="lazy"
           >
         </figure>
 
         <p>
-          O sistema acompanha conversas, responde dúvidas recorrentes,
-          confirma horários, envia lembretes e evita que contatos importantes esfriem.
+          <strong>AtendeAI:</strong> O assistente comercial autônomo da Aeria Apps.
+          Acompanha conversas, qualifica leads, responde dúvidas recorrentes de preços e serviços,
+          e direciona para o agendamento/fechamento.
         </p>
+
+        <div style="margin-top: 16px;">
+          <a href="https://atendeai.aeria-apps.com.br" class="btn secondary small" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 14px;">
+            <span>Testar AtendeAI ao vivo</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+          </a>
+        </div>
       </article>
 
       <article class="application-card">

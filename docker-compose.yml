@@ -28,6 +28,28 @@ services:
     networks:
       - traefik
 
+  atendeai:
+    build: ./atendeai
+    restart: unless-stopped
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      ATENDEAI_ADMIN_TOKEN: ${ATENDEAI_ADMIN_TOKEN:-}
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/health')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.atendeai.rule=Host(`atendeai.aeria-apps.com.br`)
+      - traefik.http.routers.atendeai.entrypoints=web,websecure
+      - traefik.http.routers.atendeai.tls.certresolver=letsencrypt
+      - traefik.http.services.atendeai.loadbalancer.server.port=8787
+    networks:
+      - traefik
+
 networks:
   traefik:
     external: true

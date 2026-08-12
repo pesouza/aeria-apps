@@ -135,6 +135,13 @@ def nexgen():
     return render_template('nexgen.html')
 
 
+# ─── AtendeAI Redirect ──────────────────────────────────────────────────
+@app.get('/atendeai')
+@app.get('/atendeai/')
+def atendeai_redirect():
+    return redirect('https://atendeai.aeria-apps.com.br', code=302)
+
+
 # ─── Admin ─────────────────────────────────────────────────────────────
 @app.get('/admin')
 def admin():
